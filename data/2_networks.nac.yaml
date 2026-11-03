@@ -1,0 +1,503 @@
+
+meraki:
+  domains:
+    - name: US
+      organizations:
+        - name: !env org_name
+          networks:
+            - name: Unified Branch 1
+              product_types:
+                - appliance
+                - switch
+                - wireless
+              time_zone: America/Los_Angeles
+              notes: This is a small branch network created via Netascode.
+              tags:
+                - small_branch
+                - autocon
+                - branch1
+              settings:
+                local_status_page_enabled: true
+                remote_status_page: true
+                secure_port: false
+                local_status_page_authentication:
+                  username: !env local_page_username
+                  password: !env local_page_password
+                named_vlans: true
+              snmp:
+                access: users
+                users:
+                  - username: !env snmp_username
+                    passphrase: !env snmp_passphrase
+              syslog_servers:
+                - host: 3.4.5.6
+                  port: 514
+                  roles:
+                    - Switch Event log
+                    - Air Marshal events
+                    - Flows
+                    - URLs
+                    - Wireless Event log
+                    - Appliance Event log
+              netflow:
+                collector_ip: 4.5.6.7
+                collector_port: 2055
+                reporting: true
+                eta: false
+              group_policies:
+                - name: Employees
+                  vlan_tagging:
+                    vlan_id: 10
+                - name: Voice
+                  vlan_tagging:
+                    vlan_id: 20
+                - name: Iot
+                  vlan_tagging:
+                    vlan_id: 30
+              devices:
+                - name: Unified Branch Network 1 Appliance
+                  serial: !env branch1_mx_serial
+                  tags:
+                    - autocon
+                    - UBAC-S
+                  lat: 37.41809510000001
+                  lng: -122.098531
+                  address: Wake Forest, N.C.
+                  notes: Small Branch Secure Router
+                  appliance:
+                    uplinks_settings:
+                      wan1:
+                        enabled: true
+                        vlan_tagging:
+                          enabled: false
+                        svis:
+                          ipv4:
+                            assignment_mode: "dynamic"
+                      wan2:
+                        enabled: true
+                        vlan_tagging:
+                          enabled: false
+                        svis:
+                          ipv4:
+                            assignment_mode: "dynamic"
+              appliance:
+                vlans:
+                  - vlan_id: 10
+                    name: "Data"
+                    subnet: 10.1.10.0/24
+                    appliance_ip: 10.1.10.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 20
+                    name: "Voice"
+                    subnet: 10.1.20.0/24
+                    appliance_ip: 10.1.20.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 30
+                    name: "Iot"
+                    subnet: 10.1.30.0/24
+                    appliance_ip: 10.1.30.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 40
+                    name: "PCI"
+                    subnet: 10.1.40.0/24
+                    appliance_ip: 10.1.40.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 50
+                    name: "Guest"
+                    subnet: 10.1.50.0/24
+                    appliance_ip: 10.1.50.1
+                    dns_nameservers: opendns
+                    dhcp_handling: "Run a DHCP server"
+                    dhcp_lease_time: "1 day"
+                    dhcp_boot_options: false
+                    mandatory_dhcp: true
+                  - vlan_id: 999
+                    name: "Infra"
+                    subnet: 10.1.255.0/24
+                    appliance_ip: 10.1.255.1
+                    dns_nameservers: "8.8.8.8\n8.8.4.4"
+                    dhcp_handling: "Run a DHCP server"
+                    dhcp_lease_time: "1 day"
+                    dhcp_boot_options: false
+                    mandatory_dhcp: false
+                vpn_site_to_site_vpn:
+                  mode: spoke
+                  hubs:
+                    - hub_network_name: !env vpn_hub_network_name
+                      use_default_route: true
+                  subnets:
+                    - local_subnet: 10.1.10.0/24
+                      use_vpn: true
+                    - local_subnet: 10.1.20.0/24
+                      use_vpn: true
+                    - local_subnet: 10.1.30.0/24
+                      use_vpn: true
+                    - local_subnet: 10.1.40.0/24
+                      use_vpn: true
+                    - local_subnet: 10.1.50.0/24
+                      use_vpn: false
+                    - local_subnet: 10.1.255.0/24
+                      use_vpn: true
+                settings:
+                  client_tracking_method: "MAC address"
+                  deployment_mode: routed
+                  dynamic_dns:
+                    prefix: "my-network"
+                    enabled: true
+                ports:
+                  - port_id_ranges:
+                      - from: 5
+                        to: 6
+                      - from: 13
+                        to: 14
+                    enabled: true
+                    type: trunk
+                    allowed_vlans: "1,10,20,30,40,50,999"
+                    vlan: 1
+                  - port_id_ranges:
+                      - from: 7
+                        to: 12
+                    enabled: false
+                traffic_shaping:
+                  global_bandwidth_limits:
+                    limit_up: 0
+                    limit_down: 0
+                  custom_performance_classes:
+                    - name: SaaS_Traffic
+                      max_latency: 150
+                      max_jitter: 50
+                      max_loss_percentage: 5
+                    - name: Critical_Apps
+                      max_latency: 150
+                      max_jitter: 20
+                      max_loss_percentage: 2
+                  rules:
+                    rules:
+                      - name: Rule 01
+                        definitions:
+                          - type: "localNet"
+                            value: "172.16.99.0/24"
+                        per_client_bandwidth_limits:
+                          settings: "ignore"
+                        dscp_tag_value: 0
+                        priority: high
+                      - name: Rule 02
+                        definitions:
+                          - type: "ipRange"
+                            value: "10.102.1.161/32:443"
+                        per_client_bandwidth_limits:
+                          settings: ignore
+                        dscp_tag_value: 18
+                        priority: high
+                    default_rules: true
+                  uplink_bandwidth_limits:
+                    wan1:
+                      limit_up: 400000
+                      limit_down: 400000
+                    wan2:
+                      limit_up: 50000
+                      limit_down: 500000
+                    cellular:
+                      limit_up: 0
+                      limit_down: 0
+                  uplink_selection:
+                    default_uplink: wan1
+                    active_active_auto_vpn: true
+                    load_balancing: false
+                    failover_and_failback_immediate: false
+                    vpn_traffic_uplink_preferences:
+                      - name: policy 1
+                        preferred_uplink: wan2
+                        traffic_filters:
+                          - type: applicationCategory
+                            value:
+                              id: meraki:layer7/category/16
+                        fail_over_criterion: poorPerformance
+                        performance_class:
+                          type: builtin
+                          builtin_performance_class_name: VoIP
+                      - name: policy 2
+                        preferred_uplink: wan2
+                        traffic_filters:
+                          - type: "custom"
+                            value:
+                              protocol: tcp
+                              source:
+                                port: any
+                                cidr: any
+                              destination:
+                                port: 443
+                                cidr: "10.102.1.161/32"
+                        fail_over_criterion: poorPerformance
+                        performance_class:
+                          type: custom
+                          custom_performance_class_name: Critical_Apps
+                      - name: policy 3
+                        preferred_uplink: wan1
+                        traffic_filters:
+                          - type: "custom"
+                            value:
+                              protocol: any
+                              source:
+                                port: any
+                                cidr: any
+                              destination:
+                                port: any
+                                cidr: any
+                        fail_over_criterion: poorPerformance
+                        performance_class:
+                          type: custom
+                          custom_performance_class_name: Critical_Apps
+            - name: Unified Branch 2
+              product_types:
+                - appliance
+                - switch
+                - wireless
+              time_zone: America/Los_Angeles
+              notes: This is a small branch network created via Netascode.
+              tags:
+                - small_branch
+                - autocon
+                - branch2
+              settings:
+                local_status_page_enabled: true
+                remote_status_page: true
+                secure_port: false
+                local_status_page_authentication:
+                  username: !env local_page_username
+                  password: !env local_page_password
+                named_vlans: true
+              snmp:
+                access: users
+                users:
+                  - username: !env snmp_username
+                    passphrase: !env snmp_passphrase
+              syslog_servers:
+                - host: 3.4.5.6
+                  port: 514
+                  roles:
+                    - Switch Event log
+                    - Air Marshal events
+                    - Flows
+                    - URLs
+                    - Wireless Event log
+                    - Appliance Event log
+              netflow:
+                collector_ip: 4.5.6.7
+                collector_port: 2055
+                reporting: true
+                eta: false
+              group_policies:
+                - name: Employees
+                  vlan_tagging:
+                    vlan_id: 10
+                - name: Voice
+                  vlan_tagging:
+                    vlan_id: 20
+                - name: Iot
+                  vlan_tagging:
+                    vlan_id: 30
+              devices:
+                - name: Unified Branch Network 2 Appliance
+                  serial: !env branch2_mx_serial
+                  tags:
+                    - autocon
+                    - UBAC-S
+                  lat: 37.41809510000001
+                  lng: -122.098531
+                  address: Wake Forest, N.C.
+                  notes: Small Branch Secure Router
+                  appliance:
+                    uplinks_settings:
+                      wan1:
+                        enabled: true
+                        vlan_tagging:
+                          enabled: false
+                        svis:
+                          ipv4:
+                            assignment_mode: "dynamic"
+                      wan2:
+                        enabled: true
+                        vlan_tagging:
+                          enabled: false
+                        svis:
+                          ipv4:
+                            assignment_mode: "dynamic"
+              appliance:
+                vlans:
+                  - vlan_id: 10
+                    name: "Data"
+                    subnet: 10.2.10.0/24
+                    appliance_ip: 10.2.10.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 20
+                    name: "Voice"
+                    subnet: 10.2.20.0/24
+                    appliance_ip: 10.2.20.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 30
+                    name: "Iot"
+                    subnet: 10.2.30.0/24
+                    appliance_ip: 10.2.30.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 40
+                    name: "PCI"
+                    subnet: 10.2.40.0/24
+                    appliance_ip: 10.2.40.1
+                    dhcp_handling: "Run a DHCP server"
+                    mandatory_dhcp: false
+                  - vlan_id: 50
+                    name: "Guest"
+                    subnet: 10.2.50.0/24
+                    appliance_ip: 10.2.50.1
+                    dns_nameservers: opendns
+                    dhcp_handling: "Run a DHCP server"
+                    dhcp_lease_time: "1 day"
+                    dhcp_boot_options: false
+                    mandatory_dhcp: true
+                  - vlan_id: 999
+                    name: "Infra"
+                    subnet: 10.2.255.0/24
+                    appliance_ip: 10.2.255.1
+                    dns_nameservers: "8.8.8.8\n8.8.4.4"
+                    dhcp_handling: "Run a DHCP server"
+                    dhcp_lease_time: "1 day"
+                    dhcp_boot_options: false
+                    mandatory_dhcp: false
+                vpn_site_to_site_vpn:
+                  mode: spoke
+                  hubs:
+                    - hub_network_name: !env vpn_hub_network_name
+                      use_default_route: true
+                  subnets:
+                    - local_subnet: 10.2.10.0/24
+                      use_vpn: true
+                    - local_subnet: 10.2.20.0/24
+                      use_vpn: true
+                    - local_subnet: 10.2.30.0/24
+                      use_vpn: true
+                    - local_subnet: 10.2.40.0/24
+                      use_vpn: true
+                    - local_subnet: 10.2.50.0/24
+                      use_vpn: false
+                    - local_subnet: 10.2.255.0/24
+                      use_vpn: true
+                settings:
+                  client_tracking_method: "MAC address"
+                  deployment_mode: routed
+                  dynamic_dns:
+                    prefix: "my-network"
+                    enabled: true
+                ports:
+                  - port_id_ranges:
+                      - from: 5
+                        to: 6
+                      - from: 13
+                        to: 14
+                    enabled: true
+                    type: trunk
+                    allowed_vlans: "1,10,20,30,40,50,999"
+                    vlan: 1
+                  - port_id_ranges:
+                      - from: 7
+                        to: 12
+                    enabled: false
+                traffic_shaping:
+                  global_bandwidth_limits:
+                    limit_up: 0
+                    limit_down: 0
+                  custom_performance_classes:
+                    - name: SaaS_Traffic
+                      max_latency: 150
+                      max_jitter: 50
+                      max_loss_percentage: 5
+                    - name: Critical_Apps
+                      max_latency: 150
+                      max_jitter: 20
+                      max_loss_percentage: 2
+                  rules:
+                    rules:
+                      - name: Rule 01
+                        definitions:
+                          - type: "localNet"
+                            value: "172.16.99.0/24"
+                        per_client_bandwidth_limits:
+                          settings: "ignore"
+                        dscp_tag_value: 0
+                        priority: high
+                      - name: Rule 02
+                        definitions:
+                          - type: "ipRange"
+                            value: "10.102.1.161/32:443"
+                        per_client_bandwidth_limits:
+                          settings: ignore
+                        dscp_tag_value: 18
+                        priority: high
+                    default_rules: true
+                  uplink_bandwidth_limits:
+                    wan1:
+                      limit_up: 400000
+                      limit_down: 400000
+                    wan2:
+                      limit_up: 50000
+                      limit_down: 500000
+                    cellular:
+                      limit_up: 0
+                      limit_down: 0
+                  uplink_selection:
+                    default_uplink: wan1
+                    active_active_auto_vpn: true
+                    load_balancing: false
+                    failover_and_failback_immediate: false
+                    vpn_traffic_uplink_preferences:
+                      - name: policy 1
+                        preferred_uplink: wan2
+                        traffic_filters:
+                          - type: applicationCategory
+                            value:
+                              id: meraki:layer7/category/16
+                        fail_over_criterion: poorPerformance
+                        performance_class:
+                          type: builtin
+                          builtin_performance_class_name: VoIP
+                      - name: policy 2
+                        preferred_uplink: wan2
+                        traffic_filters:
+                          - type: "custom"
+                            value:
+                              protocol: tcp
+                              source:
+                                port: any
+                                cidr: any
+                              destination:
+                                port: 443
+                                cidr: "10.102.1.161/32"
+                        fail_over_criterion: poorPerformance
+                        performance_class:
+                          type: custom
+                          custom_performance_class_name: Critical_Apps
+                      - name: policy 3
+                        preferred_uplink: wan1
+                        traffic_filters:
+                          - type: "custom"
+                            value:
+                              protocol: any
+                              source:
+                                port: any
+                                cidr: any
+                              destination:
+                                port: any
+                                cidr: any
+                        fail_over_criterion: poorPerformance
+                        performance_class:
+                          type: custom
+                          custom_performance_class_name: Critical_Apps
+            - name: !env vpn_hub_network_name
+              managed: false

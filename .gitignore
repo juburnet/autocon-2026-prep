@@ -1,0 +1,5 @@
+.terraform.lock.hcl
+.terraform/
+merged_configuration.nac.yaml
+*.tfstate
+*.tfstate.*
