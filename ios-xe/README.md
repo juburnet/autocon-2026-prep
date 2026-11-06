@@ -90,3 +90,35 @@ terraform init
 terraform plan
 terraform apply
 ```
+
+## Testing
+
+- `rules/` holds [`iac-validate`](https://github.com/netascode/iac-validate) semantic
+  rules (e.g. `201_unique_device_host.py` blocks two devices sharing the same
+  `host`/management IP):
+
+  ```sh
+  pip install iac-validate
+  iac-validate -r rules data/**/*.nac.yaml
+  ```
+
+- `tests/templates/` holds a [`nac-test`](https://github.com/netascode/nac-test)
+  Robot Framework suite that connects to each live device over NETCONF and checks
+  it against the YAML model (`devices/hostname.robot` verifies the device's
+  configured hostname matches `devices[].variables.HOSTNAME`). The NETCONF
+  transport (`tests/templates/iosxe_netconf.py`) uses the `ncclient` package,
+  which isn't one of `nac-test`'s own dependencies and needs installing
+  separately:
+
+  ```sh
+  pip install ncclient
+  ```
+
+  It authenticates with the same `IOSXE_USERNAME` / `IOSXE_PASSWORD` /
+  `IOSXE_INSECURE` env vars as the Terraform provider (see Prerequisites above).
+  Needs the merged model written to disk first:
+
+  ```sh
+  terraform apply -target=module.iosxe.module.model -auto-approve
+  nac-test -d ./xe_merged_config.nac.yaml -t ./tests/templates -o ./tests/results
+  ```

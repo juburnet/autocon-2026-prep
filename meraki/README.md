@@ -93,3 +93,25 @@ in the directory into one model before Terraform ever runs, so:
   to `4_wireless.nac.yaml`) changes nothing about what gets deployed.
 - The only things that determine real apply order are Terraform's own resource
   dependency graph and, if used, explicit `-target` flags.
+
+## Testing
+
+- `rules/` holds [`iac-validate`](https://github.com/netascode/iac-validate) semantic
+  rules (e.g. `101_admin_name.py` blocks an org administrator named `root`):
+
+  ```sh
+  pip install iac-validate
+  iac-validate -r rules data/*.nac.yaml
+  ```
+
+- `tests/templates/` holds a [`nac-test`](https://github.com/netascode/nac-test)
+  Robot Framework suite that queries the live Meraki Dashboard API and checks it
+  against the YAML model (`config/networks_list.robot` verifies each network's
+  `name`, `product_types`, `time_zone`, and `tags`). Needs `MERAKI_API_KEY` set
+  and the merged model written to disk first:
+
+  ```sh
+  terraform apply -target=module.meraki.module.model -auto-approve
+  nac-test -d ./meraki_merged_configuration.nac.yaml -t ./tests/templates -o ./tests/results
+  ```
+

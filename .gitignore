@@ -7,3 +7,7 @@ merged_configuration.nac.yaml
 site/
 .cache/
 __pycache__/
+
+.env
+*.env
+!.env.example
