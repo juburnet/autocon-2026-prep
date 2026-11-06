@@ -1,0 +1,9 @@
+---
+iosxe:
+  global:
+    configuration:
+      banner:
+        login: |-
+          #########################################
+          #   Welcome to the Autocon IOS XE Lab!  #
+          #########################################

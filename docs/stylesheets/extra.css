@@ -1,0 +1,809 @@
+/* ============================================================================
+   Autocon 2026 Network-as-Code Lab Guide — MkDocs Material overrides.
+   Palette:
+     accent1  #02C8FF  cyan    — primary accent (headings, links)
+     accent2  #0A60FF  blue    — secondary accent (H2, nav)
+     accent3  #FF007F  pink    — tertiary accent (H3, warnings, highlights)
+     accent4  #FF9000  orange  — warm accent (admonition notes, callouts)
+     accent6  #6B6B6B  gray    — neutral (muted lines, borders)
+     lt1      #07182D  navy    — deep background
+   ========================================================================= */
+
+:root {
+    --lab-cyan:   #02C8FF;
+    --lab-blue:   #0A60FF;
+    --lab-pink:   #FF007F;
+    --lab-orange: #FF9000;
+    --lab-gray:   #6B6B6B;
+    --lab-navy:   #07182D;
+}
+
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: var(--lab-blue);
+    --md-primary-bg-color: #fff;
+    --md-typeset-a-color: var(--lab-blue);
+    --md-accent-fg-color: var(--lab-cyan);
+}
+
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color: var(--lab-navy);
+    --md-primary-bg-color: #fff;
+    --md-typeset-a-color: #3a9bff;
+    --md-accent-fg-color: var(--lab-cyan);
+}
+
+
+/* ---------- layout ----------
+   Wider grid so the 1600x720 HTML diagrams (and their text) stop getting
+   downsized into an unreadable band when the right-rail TOC is off. */
+.md-grid { max-width: 1680px; }
+.md-typeset__table { min-width: 100%; }
+.md-typeset table:not([class]) { display: table; }
+.max-code-height > pre > code { max-height: 500px; overflow-y: auto; }
+
+/* Tighter, denser admonitions — they were eating too much vertical real-estate. */
+.md-typeset .admonition,
+.md-typeset details { font-size: .72rem; }
+
+
+/* ============================================================================
+   Colorized headers — each level gets its own accent so the page reads
+   as a visual hierarchy, not a wall of identical text. H1 is the page title
+   (strong cyan top rule), H2 separates major sections (blue left rule), H3
+   marks sub-steps (pink accent).
+   ========================================================================= */
+
+.md-typeset h1 {
+    color: var(--md-default-fg-color);
+    font-weight: 800;
+    border-top: 4px solid var(--lab-cyan);
+    padding-top: 0.6rem;
+    margin-top: 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.md-typeset h2 {
+    color: var(--md-default-fg-color);
+    font-weight: 700;
+    border-left: 4px solid var(--lab-blue);
+    padding-left: 0.7rem;
+    margin-top: 2.2rem;
+    letter-spacing: -0.005em;
+}
+
+.md-typeset h3 {
+    color: var(--lab-blue);
+    font-weight: 700;
+    margin-top: 1.8rem;
+    position: relative;
+}
+
+.md-typeset h3::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--lab-blue);
+    border-radius: 2px;
+    margin-right: 0.55rem;
+    transform: translateY(-2px);
+}
+
+.md-typeset h4 {
+    color: var(--lab-orange);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    margin-top: 1.5rem;
+}
+
+/* Dark-mode slate pulls the foreground to white; keep the accents the same. */
+[data-md-color-scheme="slate"] .md-typeset h3 { color: var(--lab-blue); }
+[data-md-color-scheme="slate"] .md-typeset h4 { color: var(--lab-orange); }
+
+
+/* ============================================================================
+   Page navigation (← Previous / Next → links at the bottom of every task).
+   The lab guide uses a uniform markdown convention — the last paragraph of
+   every page is `**← Previous:** [...] · **Next:** [...]` — so we can style
+   that one paragraph into a pair of pills without touching the markdown.
+   ========================================================================= */
+
+.md-typeset hr + p:last-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 0;
+    background: transparent;
+}
+
+.md-typeset hr + p:last-child strong {
+    display: none;  /* hide "← Previous:" / "Next:" labels — icons carry the meaning */
+}
+
+.md-typeset hr + p:last-child a {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.25rem;
+    border-radius: 10px;
+    background: rgba(2, 200, 255, 0.06);
+    border: 1px solid rgba(2, 200, 255, 0.3);
+    color: var(--md-default-fg-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    line-height: 1.35;
+    position: relative;
+}
+
+.md-typeset hr + p:last-child a:nth-of-type(1) {
+    /* Previous - always the first link, always left-aligned with a blue rail */
+    border-left: 4px solid var(--lab-blue);
+    padding-left: 1.1rem;
+}
+
+.md-typeset hr + p:last-child a:nth-of-type(1)::before {
+    content: "◀";
+    color: var(--lab-blue);
+    font-size: 0.85em;
+    margin-right: 0.35rem;
+}
+
+/* Next styling only applies when there are TWO links in the paragraph.
+   Using :nth-of-type(2) (not :last-of-type) means a single-link footer
+   (e.g. the last page's "Previous only") doesn't accidentally render as a
+   Next pill stuck to the right edge. */
+.md-typeset hr + p:last-child a:nth-of-type(2) {
+    /* Next */
+    border-right: 4px solid var(--lab-pink);
+    padding-right: 1.1rem;
+    text-align: right;
+    justify-content: flex-end;
+}
+
+.md-typeset hr + p:last-child a:nth-of-type(2)::after {
+    content: "▶";
+    color: var(--lab-pink);
+    font-size: 0.85em;
+    margin-left: 0.35rem;
+}
+
+/* When there's only one link (terminal pages like the final applying step),
+   keep it at its natural flex width instead of stretching to fill the row. */
+.md-typeset hr + p:last-child:has(a:only-of-type) {
+    justify-content: flex-start;
+}
+.md-typeset hr + p:last-child a:only-of-type {
+    flex: 0 1 auto;
+    max-width: 50%;
+}
+
+/* Next-only footer (e.g. the very first page): mark the link with
+   {.next-only} via attr_list so it renders right-aligned with a right
+   arrow instead of being treated as a Previous pill. */
+.md-typeset hr + p:last-child:has(a.next-only) {
+    justify-content: flex-end;
+}
+.md-typeset hr + p:last-child a.next-only {
+    border-left: none;
+    border-right: 4px solid var(--lab-pink);
+    padding-left: 1.25rem;
+    padding-right: 1.1rem;
+    text-align: right;
+    justify-content: flex-end;
+    flex: 0 1 auto;
+    max-width: 50%;
+}
+.md-typeset hr + p:last-child a.next-only::before {
+    content: none;
+}
+.md-typeset hr + p:last-child a.next-only::after {
+    content: "▶";
+    color: var(--lab-pink);
+    font-size: 0.85em;
+    margin-left: 0.35rem;
+}
+
+.md-typeset hr + p:last-child a:hover {
+    background: rgba(2, 200, 255, 0.14);
+    border-color: var(--lab-cyan);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+/* Hide the " · " separator between prev and next — flexbox already gaps them. */
+.md-typeset hr + p:last-child {
+    font-size: 0;  /* kills whitespace text nodes */
+}
+.md-typeset hr + p:last-child a { font-size: 0.78rem; }
+
+
+/* ============================================================================
+   Admonition accents — thin colored edge instead of Material's default heavy
+   fill. Matches the same palette used in the diagrams.
+   ========================================================================= */
+
+.md-typeset .admonition,
+.md-typeset details {
+    border-left-width: 4px;
+}
+
+.md-typeset .admonition.note, .md-typeset details.note              { border-left-color: var(--lab-blue); }
+.md-typeset .admonition.info, .md-typeset details.info              { border-left-color: var(--lab-cyan); }
+.md-typeset .admonition.tip,  .md-typeset details.tip               { border-left-color: var(--lab-cyan); }
+.md-typeset .admonition.warning, .md-typeset details.warning        { border-left-color: var(--lab-orange); }
+.md-typeset .admonition.danger,  .md-typeset details.danger         { border-left-color: var(--lab-pink); }
+.md-typeset .admonition.failure, .md-typeset details.failure        { border-left-color: var(--lab-pink); }
+.md-typeset .admonition.example, .md-typeset details.example        { border-left-color: var(--lab-pink); }
+.md-typeset .admonition.abstract,.md-typeset details.abstract       { border-left-color: var(--lab-gray); }
+
+
+/* ============================================================================
+   Code blocks — a thin cyan left edge pins them to the lab's visual identity
+   without being loud. Inline `code` gets the same pink used for `accent`
+   words, so inline code in prose doesn't disappear.
+   ========================================================================= */
+
+/* Commands (copy-able): bright cyan left rail + cyan corner accent. The
+   rail and the copy button together read as "type this".
+   Output blocks (marked `.no-copy`): muted gray rail + slightly darker
+   background so they read as "what you'll see" rather than "what to
+   type". Both share the same monospace body; the framing does the
+   distinguishing. */
+.md-typeset pre > code { border-left: 3px solid var(--lab-cyan); }
+
+/* Output blocks: .no-copy is added by pymdownx on fences with the
+   { .no-copy } attribute, per the convention used in this guide. */
+.md-typeset .highlight.no-copy { position: relative; }
+.md-typeset .highlight.no-copy pre > code {
+    border-left-color: var(--lab-gray);
+    background: rgba(0, 0, 0, 0.18);
+}
+[data-md-color-scheme="default"] .md-typeset .highlight.no-copy pre > code {
+    background: rgba(0, 0, 0, 0.04);
+}
+/* Small "OUTPUT" corner label so the distinction is explicit, not
+   just color-coded (more accessible for color-deficient readers). */
+.md-typeset .highlight.no-copy::before {
+    content: "OUTPUT";
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    z-index: 1;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--lab-gray);
+    background: rgba(107, 107, 107, 0.15);
+    padding: 2px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0.85;
+}
+/* If the fence already has a title (e.g. {title="Expected output"}),
+   the title bar sits at the top of the block - hide our OUTPUT pill
+   to avoid double-labelling. */
+.md-typeset .highlight.no-copy:has(.filename)::before { display: none; }
+
+.md-typeset :not(pre) > code {
+    color: var(--lab-pink);
+    background: rgba(255, 0, 127, 0.07);
+    border-radius: 3px;
+    padding: 0.1rem 0.35rem;
+}
+[data-md-color-scheme="slate"] .md-typeset :not(pre) > code {
+    background: rgba(255, 0, 127, 0.12);
+}
+
+
+/* ============================================================================
+   Tables — striped rows + hover highlight. Scan-reading relies on a visual
+   rail for the eye to follow. Plus a cyan left border for the whole table so
+   it feels like it belongs with the rest of the lab's accented chrome.
+   ========================================================================= */
+
+.md-typeset table:not([class]) {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border-left: 3px solid var(--lab-cyan);
+}
+
+.md-typeset table:not([class]) thead th {
+    background: rgba(2, 200, 255, 0.12);
+    color: var(--md-default-fg-color);
+    font-weight: 700;
+    border-bottom: 2px solid var(--lab-cyan);
+}
+
+.md-typeset table:not([class]) tbody tr:nth-child(even) {
+    background: rgba(2, 200, 255, 0.04);
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+    background: rgba(255, 0, 127, 0.06);
+    transition: background 120ms ease;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) thead th {
+    background: rgba(2, 200, 255, 0.18);
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:nth-child(even) {
+    background: rgba(2, 200, 255, 0.06);
+}
+
+
+/* ============================================================================
+   Task lists — pymdownx.tasklist with custom_checkbox renders - [ ] / - [x]
+   as real checkboxes. Restyle them to the lab palette so they read as
+   progress markers rather than form controls.
+   ========================================================================= */
+
+.md-typeset .task-list-item { list-style-type: none; }
+.md-typeset .task-list-item [type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--lab-cyan);
+    border-radius: 3px;
+    margin-right: 0.5rem;
+    margin-left: -1.4rem;
+    position: relative;
+    top: 2px;
+}
+.md-typeset .task-list-item [type="checkbox"]:checked {
+    background: var(--lab-cyan);
+    border-color: var(--lab-cyan);
+}
+.md-typeset .task-list-item [type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    top: -3px;
+    left: 2px;
+    color: white;
+    font-weight: 900;
+    font-size: 11px;
+}
+
+
+/* ============================================================================
+   Scroll progress bar — a 2px cyan bar pinned to the very top of the page
+   that fills left-to-right as the learner scrolls. Pure CSS via a fixed
+   element driven by a CSS variable that JS updates on scroll. If JS is
+   disabled the bar simply doesn't render — zero degraded behavior.
+   Material's own instant.progress handles the loading-bar case; this adds
+   the reading-progress case.
+   ========================================================================= */
+
+.clus-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    z-index: 10;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--lab-cyan), var(--lab-pink));
+    transform-origin: 0 0;
+    transform: scaleX(var(--clus-scroll, 0));
+    transition: transform 60ms linear;
+}
+
+
+/* ============================================================================
+   Footer — denser and more useful than the bare `Copyright © 2026`.
+   Use display:flex so author block + revision time align horizontally.
+   ========================================================================= */
+
+.md-footer-meta__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+}
+
+.md-footer-meta a { color: var(--lab-cyan); }
+.md-footer-meta a:hover { color: var(--lab-pink); }
+
+
+/* ============================================================================
+   Breadcrumbs (navigation.path) — subtle row above each H1. Material's
+   default is mid-gray chevrons; make the active (last) segment cyan so the
+   current page is obvious at a glance.
+   ========================================================================= */
+
+.md-path__list {
+    font-size: 0.72rem;
+    opacity: 0.85;
+}
+.md-path__item:last-child .md-path__link {
+    color: var(--lab-cyan);
+    font-weight: 600;
+}
+
+
+/* ============================================================================
+   Code annotations (content.code.annotate) — numbered markers inside code
+   blocks are rendered as small circles. Tint them cyan to match.
+   ========================================================================= */
+
+.md-typeset .md-annotation__index {
+    background: var(--lab-cyan);
+    color: var(--lab-navy);
+    font-weight: 700;
+}
+
+
+/* ============================================================================
+   Header — gradient background (navy → slightly lifted blue) with a 2px
+   cyan→pink glow line underneath. The diagonal gradient gives the bar
+   depth without fighting the content for attention; the glow line ties
+   the whole page to the lab's accent palette (repeated from H1/H3 styles)
+   and visually anchors the tab band above the content area.
+   ========================================================================= */
+
+.md-header {
+    background: linear-gradient(135deg, #07182D 0%, #0a2340 60%, #112a58 100%) !important;
+    box-shadow: 0 2px 0 0 transparent;  /* shadow replaced by ::after glow line */
+    position: relative;
+}
+
+.md-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+        rgba(2, 200, 255, 0.1) 0%,
+        var(--lab-cyan) 18%,
+        var(--lab-pink) 82%,
+        rgba(255, 0, 127, 0.1) 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+
+/* ============================================================================
+   Screenshots & figures — every raw <img> in the article gets the same
+   treatment so the content area reads as a curated set of visuals rather
+   than dropped-in captures. Soft shadow for depth, thin cyan border so they
+   belong to the lab's visual language, rounded corners, and a gentle hover
+   lift (they're already clickable via glightbox - the lift makes that
+   affordance explicit).
+   Scoped to article content only; logo, nav icons, and chip swatches are
+   excluded by selector specificity.
+   ========================================================================= */
+
+.md-typeset figure img,
+.md-typeset > p > img,
+.md-typeset > p > a > img {
+    border-radius: 8px;
+    border: 1px solid rgba(2, 200, 255, 0.35);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18),
+                0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    background: var(--md-default-bg-color);
+}
+
+.md-typeset figure img:hover,
+.md-typeset > p > img:hover,
+.md-typeset > p > a > img:hover {
+    transform: translateY(-2px);
+    border-color: var(--lab-cyan);
+    box-shadow: 0 10px 28px rgba(2, 200, 255, 0.18),
+                0 2px 6px rgba(0, 0, 0, 0.2);
+    cursor: zoom-in;
+}
+
+/* Figures already have caption styling from the glightbox plugin; tighten
+   their top margin so the image + caption read as one unit. */
+.md-typeset figure { margin: 1.4rem 0 1.6rem; text-align: center; }
+.md-typeset figcaption {
+    font-size: 0.72rem;
+    color: var(--md-default-fg-color--light);
+    margin-top: 0.35rem;
+    font-style: italic;
+}
+
+
+/* ============================================================================
+   Top tabs nav — transform the flat default into a visually alive row:
+     • Labels go a half-weight bolder with slightly more letter-spacing so
+       they read as section titles, not inline text.
+     • Each tab grows a cyan→pink gradient underline that slides in from
+       the left on hover. Pure CSS transform, no layout shift.
+     • The active tab's underline is solid (always visible) and its label
+       is 800-weight + white. No icon noise — typography + motion carry
+       the identity.
+     • The tabs row itself inherits the header's navy so it extends the
+       gradient bar above it instead of sitting on a visible seam.
+   ========================================================================= */
+
+.md-tabs {
+    background: transparent;  /* let the header gradient show through */
+    border-bottom: 1px solid rgba(2, 200, 255, 0.12);
+}
+
+.md-tabs__link {
+    opacity: 1;
+    color: rgba(255, 255, 255, 0.72);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    margin: 0 0.2rem;
+    padding: 0.65rem 0.85rem 0.75rem;
+    position: relative;
+    transition: color 160ms ease, transform 160ms ease;
+}
+
+.md-tabs__link::after {
+    content: "";
+    position: absolute;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.35rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--lab-cyan), var(--lab-pink));
+    border-radius: 1px;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.md-tabs__link:hover {
+    color: #FFFFFF;
+}
+.md-tabs__link:hover::after {
+    transform: scaleX(1);
+}
+
+.md-tabs__link--active {
+    color: #FFFFFF !important;
+    font-weight: 800;
+}
+.md-tabs__link--active::after {
+    transform: scaleX(1);
+    /* active state: glow slightly to distinguish from hover */
+    background: linear-gradient(90deg, var(--lab-cyan), var(--lab-pink));
+    box-shadow: 0 0 8px rgba(2, 200, 255, 0.5);
+    height: 2.5px;
+}
+
+
+/* ============================================================================
+   Right-column TOC — pink for the active section, cyan for hover.
+   ========================================================================= */
+
+.md-nav__link--active,
+.md-nav__link--active:focus,
+.md-nav__link--active:hover {
+    color: var(--lab-cyan);
+    font-weight: 600;
+}
+
+.md-nav__link:hover { color: var(--lab-cyan); }
+
+
+/* ============================================================================
+   Code block badges — site-wide.
+   Every titled code block (rendered by Material as <span class='filename'>)
+   gets a colored pill identifying its kind. Four variants:
+
+     default (no class)  →  📂 FILE              cyan   (file content)
+     .terminal           →  💻 TERMINAL          orange (shell command)
+     .device-cli         →  🔌 DEVICE CLI        pink   (Cisco CLI)
+     .output             →  📋 OUTPUT            gray   (expected output)
+
+   The .filename row is also click-to-copy for FILE blocks (JS handler in
+   docs/javascripts/filename-copy.js writes the path text to the clipboard
+   and flips the badge to '✓ COPIED' for 1.5s).
+
+   Authors tag a code block via pymdownx attribute syntax:
+     ```yaml { title="path/to/file.yaml" }              -- FILE (default)
+     ```bash { .terminal title="" }                      -- TERMINAL
+     ```text { .device-cli title="access01" .no-copy }   -- DEVICE CLI
+     ```text { .output title="Expected output" .no-copy } -- OUTPUT
+   ========================================================================= */
+
+.md-typeset .filename {
+    position: relative;
+    cursor: pointer;
+    user-select: all;
+    transition: background-color .15s ease;
+}
+
+/* --- FILE (default) ------------------------------------------------------ */
+.md-typeset .filename::before {
+    content: "📂 FILE";
+    display: inline-block;
+    margin-right: 10px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(2, 200, 255, 0.18);
+    color: var(--lab-cyan);
+    border: 1px solid rgba(2, 200, 255, 0.55);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    vertical-align: 2px;
+}
+
+/* Hover: brighten the badge + faint cyan glow on the row so it's clear
+   the row is interactive (click-to-copy the path). */
+.md-typeset .filename:hover {
+    background-color: rgba(2, 200, 255, 0.07);
+}
+
+.md-typeset .filename:hover::before {
+    background: rgba(2, 200, 255, 0.30);
+    border-color: rgba(2, 200, 255, 0.85);
+}
+
+/* Click feedback: the JS handler adds .copied for ~1.5s after click;
+   the badge text flips to '✓ COPIED' via CSS so we don't have to mutate
+   the DOM text node. */
+.md-typeset .filename.copied::before {
+    content: "✓ COPIED";
+    background: rgba(2, 200, 255, 0.40);
+    border-color: var(--lab-cyan);
+    color: #fff;
+}
+
+/* --- TERMINAL (orange) ---------------------------------------------------- */
+.md-typeset .terminal .filename::before,
+.md-typeset div.terminal > .filename::before {
+    content: "💻 TERMINAL";
+    background: rgba(255, 144, 0, 0.18);
+    color: var(--lab-orange);
+    border-color: rgba(255, 144, 0, 0.55);
+}
+.md-typeset .terminal .filename:hover {
+    background-color: rgba(255, 144, 0, 0.07);
+}
+.md-typeset .terminal .filename:hover::before {
+    background: rgba(255, 144, 0, 0.30);
+    border-color: rgba(255, 144, 0, 0.85);
+}
+.md-typeset .terminal .filename.copied::before {
+    content: "✓ COPIED";
+    background: rgba(255, 144, 0, 0.40);
+    border-color: var(--lab-orange);
+    color: #fff;
+}
+
+/* Fallback: if a .terminal block has no title (no .filename row), inject
+   the badge as a top banner on the .highlight wrapper. Modern :has() is
+   supported by every browser this lab targets. */
+.md-typeset .highlight.terminal:not(:has(.filename))::before {
+    content: "💻 TERMINAL";
+    display: block;
+    padding: 6px 12px;
+    background: rgba(255, 144, 0, 0.10);
+    color: var(--lab-orange);
+    border-bottom: 1px solid rgba(255, 144, 0, 0.40);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+/* --- DEVICE CLI (pink) ----------------------------------------------------- */
+.md-typeset .device-cli .filename::before,
+.md-typeset div.device-cli > .filename::before {
+    content: "🔌 DEVICE CLI";
+    background: rgba(255, 0, 127, 0.15);
+    color: var(--lab-pink);
+    border-color: rgba(255, 0, 127, 0.55);
+}
+.md-typeset .device-cli .filename:hover {
+    background-color: rgba(255, 0, 127, 0.06);
+}
+.md-typeset .device-cli .filename:hover::before {
+    background: rgba(255, 0, 127, 0.28);
+    border-color: rgba(255, 0, 127, 0.85);
+}
+.md-typeset .device-cli .filename.copied::before {
+    content: "✓ COPIED";
+    background: rgba(255, 0, 127, 0.40);
+    border-color: var(--lab-pink);
+    color: #fff;
+}
+.md-typeset .highlight.device-cli:not(:has(.filename))::before {
+    content: "🔌 DEVICE CLI";
+    display: block;
+    padding: 6px 12px;
+    background: rgba(255, 0, 127, 0.08);
+    color: var(--lab-pink);
+    border-bottom: 1px solid rgba(255, 0, 127, 0.40);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+/* --- OUTPUT (gray) — expected output, not authored content --------------- */
+.md-typeset .output .filename::before,
+.md-typeset div.output > .filename::before {
+    content: "📋 OUTPUT";
+    background: rgba(180, 185, 192, 0.15);
+    color: #b4b9c0;
+    border-color: rgba(180, 185, 192, 0.45);
+}
+/* Output blocks aren't paths, no copy affordance — keep text-cursor + no glow. */
+.md-typeset .output .filename {
+    cursor: default;
+    user-select: text;
+}
+.md-typeset .output .filename:hover {
+    background-color: transparent;
+}
+.md-typeset .output .filename:hover::before {
+    background: rgba(180, 185, 192, 0.15);
+    border-color: rgba(180, 185, 192, 0.45);
+}
+
+/* ============================================================================
+ * INDENT GUIDES (YAML / Terraform / HCL / Python)
+ *
+ * Companion to docs/javascripts/indent-guides.js, which annotates every line
+ * of a supported code block with `class="cl"` and `--indent: N` (count of
+ * indent levels of leading whitespace). The JS also sets `--indent-width`
+ * on the <code> element to the language's spaces-per-level (2ch for YAML/
+ * HCL/Terraform, 4ch for Python), which we read back here so the stripe
+ * spacing scales per language.
+ *
+ * Each line gets a `::before` pseudo with width = N * --indent-width, so
+ * guides extend exactly to the line's indent depth and never further —
+ * the look matches VS Code's indent rulers regardless of language.
+ *
+ * Scope:
+ *   - Only blocks the JS classifies as supported get the .cl wrapper.
+ *   - .terminal / .device-cli / .output blocks are skipped at the JS layer
+ *     so this CSS will never apply there even if the selectors would match.
+ * ============================================================================ */
+
+.md-typeset .highlight pre code .cl {
+    /* Establishes containing block for the absolutely-positioned ::before. */
+    position: relative;
+}
+
+.md-typeset .highlight pre code .cl[data-indent]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: calc(var(--indent, 0) * var(--indent-width, 2ch));
+    background-image: repeating-linear-gradient(
+        to right,
+        rgba(127, 127, 127, 0.22) 0,
+        rgba(127, 127, 127, 0.22) 1px,
+        transparent 1px,
+        transparent var(--indent-width, 2ch)
+    );
+    pointer-events: none;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .highlight pre code .cl[data-indent]::before {
+    /* Slightly cooler/lighter on dark backgrounds so guides remain visible
+     * against the code surface without competing with the syntax
+     * highlight palette. */
+    background-image: repeating-linear-gradient(
+        to right,
+        rgba(200, 205, 225, 0.16) 0,
+        rgba(200, 205, 225, 0.16) 1px,
+        transparent 1px,
+        transparent var(--indent-width, 2ch)
+    );
+}

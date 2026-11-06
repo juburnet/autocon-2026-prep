@@ -1,0 +1,108 @@
+---
+site_name: "From Network Change to Code: A Hands-on Network as Code Workshop"
+site_url: "https://netascode.github.io/autocon-2026-prep/"
+site_description: "Hands-on lab for Network as Code across Meraki and IOS-XE - Terraform + YAML, authoring direct configuration then templating it, for Autocon 2026."
+site_author: "Snezana Mitrovic, Daniel Schmidt, Justin Burnette"
+copyright: Copyright &copy; {year} # This parameter will auto-update the year in HTML pages based on the build date
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress   # thin horizontal progress bar while a page loads
+    - navigation.top
+    - navigation.tracking           # URL fragment tracks the section you're reading
+    - navigation.path               # breadcrumbs above each page title
+    # - navigation.footer           # Removed so that we only use custom links at the end of each page
+    - search.suggest
+    - search.highlight              # highlight matched terms on the target page
+    - search.share                  # share deep-linked search URLs
+    - content.code.copy
+    - content.code.annotate         # numbered callouts inside code blocks
+    - toc.integrate                 # Re-enabled: merges TOC into the left nav so the
+                                    # right rail goes away and the content column
+                                    # widens enough for wide diagrams to render legibly
+                                    # instead of getting downsized.
+  custom_dir: docs/overrides
+  palette:
+    # Default to dark mode (slate) for every visitor regardless of OS preference.
+    # The OS-preference 'media:' selectors were removed intentionally - we want
+    # the first impression to be the lab's branded dark navy palette. Users can
+    # flip to light at any time via the brightness toggle in the header; their
+    # choice persists in localStorage across pages and visits.
+    - scheme: slate
+      primary: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+extra:
+  generator: false
+  footer_revision_datetime: true # Change to true to add to the footer the datetime for last update.
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  # Click-to-copy handler for titled code blocks (FILE / TERMINAL / DEVICE CLI
+  # badges). Skips OUTPUT blocks where the title is descriptive, not a path.
+  - javascripts/filename-copy.js
+  # Indent guides for YAML code blocks — wraps each line in <span class="cl">
+  # and sets `--indent: N` so extra.css can paint VS Code-style indent rulers.
+  - javascripts/indent-guides.js
+plugins:
+  - search
+  - awesome-nav
+  - social
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: fade
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: false
+      skip_classes:
+      - custom-skip-class-name
+      auto_caption: true
+      caption_position: top
+  - macros:
+      on_error_fail: !ENV [MACRO_ERROR_FAIL, true]  # Set to false or comment this line with # to ignore macro errors and continue the build
+      on_undefined: strict
+      verbose: false
+
+markdown_extensions:
+  - md_in_html
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - tables
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:
+      custom_checkbox: true      # render - [ ] / - [x] as real styled checkboxes
+      clickable_checkbox: false  # not interactive — these are progress markers, not form inputs
+hooks:
+  - hooks/config.py
+dev_addr: "0.0.0.0:8000"

@@ -1,0 +1,7 @@
+---
+iosxe:
+  devices:
+    - name: Leaf3
+      host: 198.18.128.205
+      variables:
+        HOSTNAME: Leaf3

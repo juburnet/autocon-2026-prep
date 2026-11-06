@@ -3,3 +3,7 @@
 merged_configuration.nac.yaml
 *.tfstate
 *.tfstate.*
+
+site/
+.cache/
+__pycache__/
