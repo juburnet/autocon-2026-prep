@@ -1,13 +1,7 @@
 ---
 iosxe:
   device_groups:
-    - name: LEAVES
+    - name: ACCESS_SWITCHES
       devices:
-        - Leaf1
-        - Leaf2
-        - Leaf3
-        - Leaf4
-    - name: BORDER_SPINES
-      devices:
-        - Border-Spine1
-        - Border-Spine2
+        - Access1
+        - Access2

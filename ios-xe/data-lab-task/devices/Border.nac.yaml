@@ -1,7 +1,7 @@
 ---
 iosxe:
   devices:
-    - name: Border-Spine1
+    - name: Border
       host: 198.18.128.201
       variables:
-        HOSTNAME: Border-Spine1
+        HOSTNAME: Border

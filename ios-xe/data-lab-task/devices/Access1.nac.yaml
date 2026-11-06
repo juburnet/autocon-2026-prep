@@ -1,7 +1,7 @@
 ---
 iosxe:
   devices:
-    - name: Leaf2
+    - name: Access1
       host: 198.18.128.204
       variables:
-        HOSTNAME: Leaf2
+        HOSTNAME: Access1

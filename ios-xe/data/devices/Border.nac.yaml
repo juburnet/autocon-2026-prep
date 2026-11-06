@@ -1,5 +1,5 @@
 ---
 iosxe:
   devices:
-    - name: Border-Spine1
+    - name: Border
       host: 198.18.128.201

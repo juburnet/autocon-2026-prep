@@ -1,7 +1,7 @@
 ---
 iosxe:
   devices:
-    - name: Leaf1
+    - name: Core
       host: 198.18.128.202
       variables:
-        HOSTNAME: Leaf1
+        HOSTNAME: Core

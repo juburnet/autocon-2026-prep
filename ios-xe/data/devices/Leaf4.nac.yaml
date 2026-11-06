@@ -1,5 +1,0 @@
----
-iosxe:
-  devices:
-    - name: Leaf4
-      host: 198.18.128.206

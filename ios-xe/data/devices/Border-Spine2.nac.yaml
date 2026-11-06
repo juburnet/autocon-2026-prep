@@ -1,5 +1,0 @@
----
-iosxe:
-  devices:
-    - name: Border-Spine2
-      host: 198.18.128.203
