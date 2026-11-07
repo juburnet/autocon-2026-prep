@@ -1,0 +1,171 @@
+# meraki/.gitlab-ci.yml — child pipeline, triggered by the root .gitlab-ci.yml
+# only when meraki/data/**/* changes.
+#
+# Uses image: danischm/nac:0.1.6, confirmed working against the
+# netascode/terraform-meraki-nac-meraki v0.9.0 module pinned in main.tf.
+# ios-xe/ needs a different, newer image/module pairing, which is why
+# meraki keeps its own child pipeline instead of sharing one image.
+#
+# Required CI/CD variables (Settings > CI/CD > Variables, masked+protected):
+#   MERAKI_API_KEY, org_name, branch1_mx_serial, branch1_ms_serial,
+#   branch1_cw_serial, branch2_mx_serial, branch2_ms_serial,
+#   branch2_cw_serial, vpn_hub_network_name, local_page_username,
+#   local_page_password, snmp_username, snmp_passphrase, v3_auth_pass,
+#   v3_priv_pass, radius_server_secret, radius_accounting_server_secret
+#   (see meraki/.env.example / root .env.example)
+#
+# Note on rules: this file uses $CI_MERGE_REQUEST_IID (not
+# $CI_PIPELINE_SOURCE == "merge_request_event") to detect MR context,
+# because child pipelines triggered via `include: local:` always report
+# CI_PIPELINE_SOURCE as "parent_pipeline" — only the CI_MERGE_REQUEST_*
+# variables carry through from an MR-sourced parent pipeline.
+
+image: danischm/nac:0.1.6
+
+variables:
+  TF_IN_AUTOMATION: "true"
+  GIT_DEPTH: "0"
+
+stages:
+  - validate
+  - plan
+  - deploy
+  - test
+
+.rules_mr_or_main: &rules_mr_or_main
+  - if: '$CI_MERGE_REQUEST_IID'
+  - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+.rules_main_only: &rules_main_only
+  - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+validate:
+  stage: validate
+  script:
+    - cd meraki
+    - echo "Checking Terraform formatting..."
+    - terraform fmt -check -recursive | tee fmt_output.txt
+    - '! grep -qE "\.tf" fmt_output.txt'
+    - echo "Generating merged configuration..."
+    - terraform init -input=false
+    - terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
+    - test -f meraki_merged_configuration.nac.yaml
+    - echo "Running nac-validate..."
+    - nac-validate ./meraki_merged_configuration.nac.yaml | tee validate_output.txt
+    - '! grep -q "ERROR" validate_output.txt'
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/fmt_output.txt
+      - meraki/validate_output.txt
+      - meraki/meraki_merged_configuration.nac.yaml
+
+plan:
+  stage: plan
+  needs: ["validate"]
+  rules: *rules_mr_or_main
+  cache:
+    key: "meraki-tfstate-$CI_COMMIT_REF_SLUG"
+    paths:
+      - meraki/terraform.tfstate
+      - meraki/terraform.tfstate.backup
+    policy: pull
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - terraform plan -out=plan.tfplan -input=false
+    - terraform show -no-color plan.tfplan > plan.txt
+    - terraform show -json plan.tfplan | jq > plan.json
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/plan.tfplan
+      - meraki/plan.txt
+      - meraki/plan.json
+      - meraki/terraform.tfstate
+      - meraki/terraform.tfstate.backup
+
+deploy:
+  stage: deploy
+  needs: ["plan"]
+  rules: *rules_main_only
+  cache:
+    key: "meraki-tfstate-$CI_COMMIT_REF_SLUG"
+    paths:
+      - meraki/terraform.tfstate
+      - meraki/terraform.tfstate.backup
+    policy: push
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - terraform apply -input=false -auto-approve plan.tfplan
+  artifacts:
+    when: always
+    expire_in: 90 days
+    paths:
+      - meraki/terraform.tfstate
+      - meraki/terraform.tfstate.backup
+
+idempotency-test:
+  stage: test
+  needs: ["deploy"]
+  rules: *rules_main_only
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - set +e
+    - terraform plan -input=false -out=idempotency.tfplan -detailed-exitcode
+    - rc=$?
+    - set -e
+    - terraform show -no-color idempotency.tfplan > idempotency_plan.txt
+    - |
+      if [ "$rc" -eq 2 ]; then
+        echo "Terraform plan detected changes! Idempotency test failed."
+        cat idempotency_plan.txt
+        exit 1
+      elif [ "$rc" -eq 0 ]; then
+        echo "Terraform is idempotent. No changes detected."
+      else
+        echo "terraform plan failed with exit code $rc"
+        exit "$rc"
+      fi
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/idempotency_plan.txt
+      - meraki/idempotency.tfplan
+
+config-test:
+  stage: test
+  needs: ["deploy"]
+  rules: *rules_main_only
+  script:
+    - cd meraki
+    - |
+      if [ -d tests/templates ]; then
+        sleep 60
+        nac-test -d ./meraki_merged_configuration.nac.yaml -t ./tests/templates -o ./tests/results | tee test_output.txt
+      else
+        echo "No tests/templates directory under meraki/ — skipping config test."
+      fi
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/tests/results/
+      - meraki/test_output.txt
+
+rollback:
+  stage: .post
+  needs: ["deploy"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_failure
+  script:
+    - cd meraki
+    - echo "Deploy failed — destroying Terraform-managed resources to roll back."
+    - terraform init -input=false
+    - terraform destroy -auto-approve -input=false || true

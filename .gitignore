@@ -1,6 +1,8 @@
 .terraform.lock.hcl
 .terraform/
 merged_configuration.nac.yaml
+meraki_merged_configuration.nac.yaml
+xe_merged_config.nac.yaml
 *.tfstate
 *.tfstate.*
 
