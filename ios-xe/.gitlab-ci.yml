@@ -112,6 +112,8 @@ idempotency-test:
   script:
     - cd ios-xe
     - terraform init -input=false
+    - echo "Regenerating merged configuration (not preserved in deploy artifacts)..."
+    - terraform apply -auto-approve -input=false -target='module.iosxe.local_sensitive_file.model[0]'
     - set +e
     - terraform plan -input=false -out=idempotency.tfplan -detailed-exitcode
     - rc=$?
@@ -141,6 +143,9 @@ config-test:
   rules: *rules_main_only
   script:
     - cd ios-xe
+    - terraform init -input=false
+    - echo "Regenerating merged configuration (not preserved in deploy artifacts)..."
+    - terraform apply -auto-approve -input=false -target='module.iosxe.local_sensitive_file.model[0]'
     - |
       if [ -d tests/templates ]; then
         sleep 60

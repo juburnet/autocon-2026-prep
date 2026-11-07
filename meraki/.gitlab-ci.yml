@@ -6,13 +6,14 @@
 # ios-xe/ needs a different, newer image/module pairing, which is why
 # meraki keeps its own child pipeline instead of sharing one image.
 #
-# Required CI/CD variables (Settings > CI/CD > Variables, masked+protected):
-#   MERAKI_API_KEY, org_name, branch1_mx_serial, branch1_ms_serial,
-#   branch1_cw_serial, branch2_mx_serial, branch2_ms_serial,
-#   branch2_cw_serial, vpn_hub_network_name, local_page_username,
-#   local_page_password, snmp_username, snmp_passphrase, v3_auth_pass,
-#   v3_priv_pass, radius_server_secret, radius_accounting_server_secret
-#   (see meraki/.env.example / root .env.example)
+# Required CI/CD variable (Settings > CI/CD > Variables, masked+protected
+# — this is the one real secret, so it stays out of this file):
+#   MERAKI_API_KEY
+#
+# org_name / branch*_*_serial below are placeholders (XXX) — fill in the
+# real org ID and device serials for your lab before running the pipeline.
+# The rest are the test-lab-only example credentials from
+# meraki/.env.example / root .env.example (not real secrets).
 #
 # Note on rules: this file uses $CI_MERGE_REQUEST_IID (not
 # $CI_PIPELINE_SOURCE == "merge_request_event") to detect MR context,
@@ -25,6 +26,26 @@ image: danischm/nac:0.1.6
 variables:
   TF_IN_AUTOMATION: "true"
   GIT_DEPTH: "0"
+  org_name: "XXX"
+  branch1_mx_serial: "XXX"
+  branch1_ms_serial: "XXX"
+  branch1_cw_serial: "XXX"
+  branch2_mx_serial: "XXX"
+  branch2_ms_serial: "XXX"
+  branch2_cw_serial: "XXX"
+  vpn_hub_network_name: "Datacenter"
+  org_admin: "admin"
+  org_admin_email: "admin-branch@netascode.cisco.com"
+  v3_auth_pass: "Cisco12345"
+  v3_priv_pass: "Cisco12345"
+  local_status_page_username: "admin"
+  local_page_username: "admin"
+  local_status_page_password: "Cisco!12345C60972A"
+  local_page_password: "Cisco!12345C60972A"
+  radius_accounting_server_secret: "Cisco12345!"
+  radius_server_secret: "Cisco12345!"
+  snmp_username: "admin"
+  snmp_passphrase: "Cisco!12345C60972A"
 
 stages:
   - validate
@@ -115,6 +136,8 @@ idempotency-test:
   script:
     - cd meraki
     - terraform init -input=false
+    - echo "Regenerating merged configuration (not preserved in deploy artifacts)..."
+    - terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
     - set +e
     - terraform plan -input=false -out=idempotency.tfplan -detailed-exitcode
     - rc=$?
@@ -144,6 +167,9 @@ config-test:
   rules: *rules_main_only
   script:
     - cd meraki
+    - terraform init -input=false
+    - echo "Regenerating merged configuration (not preserved in deploy artifacts)..."
+    - terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
     - |
       if [ -d tests/templates ]; then
         sleep 60
