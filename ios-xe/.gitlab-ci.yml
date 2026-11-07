@@ -10,6 +10,14 @@
 #   GITLAB_TOKEN (optional — enables posting the Terraform plan as an MR
 #     comment in the `notify` job; safely no-ops if unset or outside an MR)
 #
+# State: GitLab-managed remote state via Terraform's `http` backend
+# (declared empty in ios-xe/main.tf, configured entirely through the
+# TF_HTTP_* variables below — derived from predefined CI/CD variables,
+# no extra secrets needed). TF_HTTP_SKIP_CERT_VERIFICATION is "true"
+# because this lab's GitLab instance uses a self-signed certificate.
+# State is keyed per-branch via TF_STATE_NAME so each branch/MR gets its
+# own state instead of sharing one.
+#
 # Note on rules: this file uses $CI_MERGE_REQUEST_IID (not
 # $CI_PIPELINE_SOURCE == "merge_request_event") to detect MR context,
 # because child pipelines triggered via `include: local:` always report
@@ -21,6 +29,15 @@ image: danischm/nac:0.4.1
 variables:
   TF_IN_AUTOMATION: "true"
   GIT_DEPTH: "0"
+  TF_STATE_NAME: "iosxe-${CI_COMMIT_REF_SLUG}"
+  TF_HTTP_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}"
+  TF_HTTP_LOCK_ADDRESS: "${TF_HTTP_ADDRESS}/lock"
+  TF_HTTP_UNLOCK_ADDRESS: "${TF_HTTP_ADDRESS}/lock"
+  TF_HTTP_LOCK_METHOD: "POST"
+  TF_HTTP_UNLOCK_METHOD: "DELETE"
+  TF_HTTP_USERNAME: "${GITLAB_USER_LOGIN}"
+  TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
+  TF_HTTP_SKIP_CERT_VERIFICATION: "true"
 
 stages:
   - validate
@@ -62,12 +79,6 @@ plan:
   stage: plan
   needs: ["validate"]
   rules: *rules_mr_or_main
-  cache:
-    key: "iosxe-tfstate-$CI_COMMIT_REF_SLUG"
-    paths:
-      - ios-xe/terraform.tfstate
-      - ios-xe/terraform.tfstate.backup
-    policy: pull
   script:
     - cd ios-xe
     - terraform init -input=false
@@ -81,29 +92,15 @@ plan:
       - ios-xe/plan.tfplan
       - ios-xe/plan.txt
       - ios-xe/plan.json
-      - ios-xe/terraform.tfstate
-      - ios-xe/terraform.tfstate.backup
 
 deploy:
   stage: deploy
   needs: ["plan"]
   rules: *rules_main_only
-  cache:
-    key: "iosxe-tfstate-$CI_COMMIT_REF_SLUG"
-    paths:
-      - ios-xe/terraform.tfstate
-      - ios-xe/terraform.tfstate.backup
-    policy: push
   script:
     - cd ios-xe
     - terraform init -input=false
     - terraform apply -input=false -auto-approve plan.tfplan
-  artifacts:
-    when: always
-    expire_in: 90 days
-    paths:
-      - ios-xe/terraform.tfstate
-      - ios-xe/terraform.tfstate.backup
 
 idempotency-test:
   stage: test
