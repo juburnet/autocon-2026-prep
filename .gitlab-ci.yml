@@ -7,6 +7,17 @@
 #   - meraki/.gitlab-ci.yml  -> image: danischm/nac:0.1.6
 #   - ios-xe/.gitlab-ci.yml  -> image: danischm/nac:0.4.1
 #
+# Both trigger jobs share one `deploy` stage and have no `needs:` between
+# them, so when both domains change in the same push they run in parallel,
+# fully independent of each other — neither waits on the other to finish.
+#
+# Hybrid trigger: each job auto-runs when its own data/ changes (same as
+# before). If nothing changed there, it still appears in the pipeline as a
+# manual (▶) job, so you can deploy one domain on demand without touching
+# the other — e.g. to force a redeploy, or run ios-xe only even though only
+# meraki/data changed in this push. allow_failure: true on that manual rule
+# means leaving it un-clicked never blocks or fails the pipeline.
+#
 # See meraki/.gitlab-ci.yml and ios-xe/.gitlab-ci.yml for required CI/CD
 # variables and the validate/plan/deploy/test stage behavior within each.
 
@@ -18,28 +29,31 @@ workflow:
     - if: '$CI_COMMIT_BRANCH'
 
 stages:
-  - deploy-meraki
-  - deploy-iosxe
+  - deploy
 
 deploy_meraki:
-  stage: deploy-meraki
+  stage: deploy
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes: [meraki/data/**/*]
     - if: '$CI_COMMIT_BRANCH'
       changes: [meraki/data/**/*]
+    - when: manual
+      allow_failure: true
   trigger:
     include:
       - local: meraki/.gitlab-ci.yml
     strategy: depend
 
 deploy_iosxe:
-  stage: deploy-iosxe
+  stage: deploy
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes: [ios-xe/data/**/*]
     - if: '$CI_COMMIT_BRANCH'
       changes: [ios-xe/data/**/*]
+    - when: manual
+      allow_failure: true
   trigger:
     include:
       - local: ios-xe/.gitlab-ci.yml
