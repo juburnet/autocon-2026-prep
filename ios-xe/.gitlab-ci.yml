@@ -65,7 +65,7 @@ validate:
     - terraform apply -auto-approve -input=false -target='module.iosxe.local_sensitive_file.model[0]'
     - test -f xe_merged_config.nac.yaml
     - echo "Running nac-validate..."
-    - nac-validate ./xe_merged_config.nac.yaml | tee validate_output.txt
+    - nac-validate ./data/ | tee validate_output.txt
     - '! grep -q "ERROR" validate_output.txt'
   artifacts:
     when: always

@@ -1,5 +1,7 @@
 # terraform {
-#   backend "http" {}
+#   backend "http" {
+#     skip_cert_verification = true
+#   }
 # }
 
 module "iosxe" {
