@@ -146,7 +146,7 @@ config-test:
     - |
       if [ -d tests/templates ]; then
         sleep 60
-        nac-test -d ./xe_merged_config.nac.yaml -t ./tests/templates -o ./tests/results | tee test_output.txt
+        nac-test -d ./xe_merged_config.nac.yaml -t ./tests/templates -f ./tests/filters -o ./tests/results | tee test_output.txt
       else
         echo "No tests/templates directory under ios-xe/ — skipping config test."
       fi
