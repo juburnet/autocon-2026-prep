@@ -1,5 +1,5 @@
 terraform {
-  backend "http" {}
+  # backend "http" {}
   required_providers {
     meraki = {
       source = "CiscoDevNet/meraki"
@@ -12,7 +12,7 @@ provider "meraki" {
 }
 
 module "meraki" {
-  source           = "github.com/netascode/terraform-meraki-nac-meraki?ref=v0.9.0"
+  source           = "github.com/netascode/terraform-meraki-nac-meraki"
   yaml_directories = ["data"]
   write_model_file = "meraki_merged_configuration.nac.yaml"
 }

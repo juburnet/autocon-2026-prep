@@ -13,3 +13,17 @@ __pycache__/
 .env
 *.env
 !.env.example
+
+ios-xe/.pabotsuitenames
+ios-xe/.python-version
+ios-xe/tests/results/
+ios-xe/tests/.DS_Store
+ios-xe/tests/templates/.DS_Store
+
+meraki/.pabotsuitenames
+meraki/.python-version
+meraki/cache.json
+meraki/cache.json.lock
+meraki/meraki_api_throttle.lock
+meraki/test_output.txt
+meraki/tests/results/
