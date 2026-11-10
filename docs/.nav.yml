@@ -1,14 +1,13 @@
 nav:
   - Home: index.md
   - Overview: Intro01_overview.md
-  - Glossary: Glossary.md
-  - Cheat Sheet: CheatSheet.md
   - "Part 1 — Meraki":
-      - "[1] Org & global": Meraki01_org_global.md
-      - "[2] Networks & appliance": Meraki02_networks.md
-      - "[3] Switching": Meraki03_switching.md
-      - "[4] Wireless": Meraki04_wireless.md
-      - "[5] Templates": Meraki05_templates.md
+      - "[1] Log in & find org": Meraki00_login.md
+      - "[2] Org & global": Meraki01_org_global.md
+      - "[3] Networks & appliance": Meraki02_networks.md
+      - "[4] Switching": Meraki03_switching.md
+      - "[5] Wireless": Meraki04_wireless.md
+      - "[6] Templates": Meraki05_templates.md
       - "Applying Part 1": Meraki06_applying.md
   - "Part 2 — IOS-XE":
       - "[1] Global config": IOSXE01_global.md
@@ -16,3 +15,6 @@ nav:
       - "[3] Device groups": IOSXE03_device_groups.md
       - "[4] Templates": IOSXE04_templates.md
       - "Applying Part 2": IOSXE05_applying.md
+  - Glossary: Glossary.md
+  - Cheat Sheet: CheatSheet.md
+

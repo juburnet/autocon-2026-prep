@@ -2,8 +2,8 @@
 
 ## Overview
 
-This repo deploys a two-branch Meraki network (appliance, switch, wireless) using
-the [`terraform-meraki-nac-meraki`](https://github.com/netascode/terraform-meraki-nac-meraki)
+This repo deploys a single-branch Meraki network (appliance, switch, wireless)
+using the [`terraform-meraki-nac-meraki`](https://github.com/netascode/terraform-meraki-nac-meraki)
 module, driven entirely by YAML under `data/`.
 
 The module reads **every** `*.yaml` file in `data/`, deep-merges them into a single
@@ -18,6 +18,11 @@ model (matching on `name` at each nesting level), and applies the result. This m
   pattern" at the end, not a staged deployment mechanism. The two `5_` files share
   a prefix on purpose: the template library and the templates that apply it are a
   matched pair and are always read (and deployed) together.
+- `data/` starts with only `1_org_global.nac.yaml` in place. The rest of the
+  lab's files live in `data-lab-task/` until it's their turn — attendees move
+  (not copy) each file from `data-lab-task/` into `data/` as they reach that
+  step in the lab guide. `data-lab-task/` is never read by Terraform; it's a
+  staging area, not a second copy of the deployed model.
 
 ## Prerequisites
 

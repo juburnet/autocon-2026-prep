@@ -13,7 +13,8 @@ Network-as-Code YAML and GitLab CI/CD pipelines.
 
 The guide walks through both halves of the lab, in order:
 
-- **Part 1 - Meraki**, five steps authoring a single-branch Meraki network
+- **Part 1 - Meraki**, starting with logging into your lab Dashboard
+  organization, then five steps authoring a single-branch Meraki network
   (one per shared pod, appliance/switch/wireless) directly in YAML, ending
   on a templating/indirection capstone.
 - **Part 2 - IOS-XE**, a small IOS-XE lab, ending on the same

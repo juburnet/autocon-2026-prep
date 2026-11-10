@@ -1,4 +1,9 @@
-# Step 2 - `data/2_networks.nac.yaml`: networks and the MX appliance
+# Step 3 - `data/2_networks.nac.yaml`: networks and the MX appliance
+
+!!! tip "Move this step's file into place"
+    Move `data-lab-task/2_networks.nac.yaml` into `data/` before you run
+    `terraform plan`/`apply` for this step - that's what adds the branch
+    network and MX appliance to the merged model.
 
 This is the largest file and introduces the branch network (named via `!env
 branch_name` - unique per attendee pod) plus an unmanaged hub network
@@ -16,8 +21,27 @@ referenced by `!env vpn_hub_network_name`. For the branch it covers:
   performance classes, uplink-selection policies).
 
 **Key idea:** everything here is still "direct YAML" - no templates yet. The
-VLANs defined here (10/20/30/40/50/999) are what step 3's switch ports and
-step 4's SSIDs reference by ID.
+VLANs defined here (10/20/30/40/50/999) are what step 4's switch ports and
+step 5's SSIDs reference by ID.
+
+## Testing it: run `nac-test` right after this step
+
+You don't have to wait until every step is deployed to check your work. Once
+the network exists, `tests/templates/config/networks_list.robot` already has
+something to verify: the network's `name`, `product_types`, `time_zone`, and
+`tags` against the live Dashboard. Right after `terraform apply` for this
+step:
+
+```sh
+cd meraki
+terraform apply -target=module.meraki.module.model -auto-approve
+nac-test -d ./meraki_merged_configuration.nac.yaml -t ./tests/templates -o ./tests/results
+```
+
+Open `tests/results/report.html` to see the pass/fail result. Running this
+now, rather than waiting for the full deployment, is a useful habit: the
+sooner post-deploy drift or a misconfiguration is caught, the cheaper it is
+to fix.
 
 ---
 
