@@ -1,9 +1,5 @@
 # Part 1 - Meraki
 
-Project folder: `meraki/`. Module:
-[`terraform-meraki-nac-meraki`](https://github.com/netascode/terraform-meraki-nac-meraki).
-Prerequisites and the full environment-variable list are in `meraki/README.md` - this guide focuses on what each step teaches.
-
 ## Step 1 - Log In and Identify Your Lab Organization
 
 Open [https://dashboard.meraki.com](https://dashboard.meraki.com) and sign in
