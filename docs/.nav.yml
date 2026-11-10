@@ -1,6 +1,8 @@
 nav:
   - Home: index.md
   - Overview: Intro01_overview.md
+  - Glossary: Glossary.md
+  - Cheat Sheet: CheatSheet.md
   - "Part 1 — Meraki":
       - "[1] Org & global": Meraki01_org_global.md
       - "[2] Networks & appliance": Meraki02_networks.md

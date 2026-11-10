@@ -255,9 +255,28 @@
 
     .tx-hero__presenters {
         margin-top: 1.2rem;
+        color: currentColor;
+    }
+
+    .tx-hero__presenters-title {
+        font-size: .8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        opacity: .85;
+        margin-bottom: .4rem;
+    }
+
+    .tx-hero__presenters-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
         font-size: .8rem;
         opacity: .75;
-        color: currentColor;
+    }
+
+    .tx-hero__presenters-list li {
+        line-height: 1.6;
     }
 </style>
 
@@ -273,7 +292,14 @@
                 <a href="Intro01_overview/" title="{{ page.next_page.title | striptags }}" class="md-button md-button--primary">
                     Get started →
                 </a>
-                <p class="tx-hero__presenters">Workshop proctors: Snezana Mitrovic, Daniel Schmidt, Justin Burnette</p>
+                <div class="tx-hero__presenters">
+                    <p class="tx-hero__presenters-title">Meet your proctors</p>
+                    <ul class="tx-hero__presenters-list">
+                        <li>Snezana Mitrovic</li>
+                        <li>Daniel Schmidt</li>
+                        <li>Justin Burnette</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
