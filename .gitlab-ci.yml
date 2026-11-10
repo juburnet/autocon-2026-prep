@@ -7,14 +7,18 @@
 # (danischm/nac:0.1.6, matching netascode/terraform-meraki-nac-meraki
 # v0.9.0 pinned in meraki/main.tf), and one set of stages.
 #
-# Required CI/CD variable (Settings > CI/CD > Variables, masked+protected
-# — this is the one real secret, so it stays out of this file):
-#   MERAKI_API_KEY
+# Required CI/CD variables (Settings > CI/CD > Variables) — these are
+# pod-specific and/or secret, so they stay out of this file entirely:
+#   MERAKI_API_KEY   (masked+protected — the one real secret)
+#   org_name         (your Meraki organization name)
+#   branch_name      (your pod's unique network name)
+#   branch_mx_serial (your pod's MX appliance serial)
+#   branch_ms_serial (your pod's MS switch serial)
+#   branch_cw_serial (your pod's CW access point serial)
 #
-# org_name / branch_* below are placeholders (XXX) — fill in the real org
-# ID and device serials for your lab before running the pipeline. The rest
-# are the test-lab-only example credentials from .env.example (not real
-# secrets).
+# See the Cheat Sheet in the lab guide for how to add these. The variables
+# below are the test-lab-only example credentials from .env.example (not
+# real secrets).
 #
 # State: GitLab-managed remote state via Terraform's `http` backend
 # (declared empty in meraki/main.tf, configured entirely through the
@@ -55,11 +59,6 @@ variables:
   TF_HTTP_USERNAME: "${GITLAB_USER_LOGIN}"
   TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
   TF_HTTP_SKIP_CERT_VERIFICATION: "true"
-  org_name: "XXX"
-  branch_name: "XXX"
-  branch_mx_serial: "XXX"
-  branch_ms_serial: "XXX"
-  branch_cw_serial: "XXX"
   vpn_hub_network_name: "Datacenter"
   org_admin: "admin"
   org_admin_email: "admin-branch@netascode.cisco.com"

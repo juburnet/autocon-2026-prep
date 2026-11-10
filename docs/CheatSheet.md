@@ -62,6 +62,31 @@ See `meraki/README.md` and `ios-xe/README.md` for the complete variable
 lists, including the non-secret example credentials (SNMP, RADIUS, local
 status page, etc.).
 
+## Running the GitLab pipeline
+
+The `.env` variables above are for running Terraform **locally**. The GitLab
+pipeline (`.gitlab-ci.yml`) doesn't read `.env` - it needs its own copy of
+your pod-specific values, set as **GitLab CI/CD Variables** instead
+(Project → Settings → CI/CD → Variables → **Add variable**).
+
+When you add `MERAKI_API_KEY` (masked + protected), add these 5 alongside
+it - they used to be hardcoded placeholders inside `.gitlab-ci.yml`, but
+have been moved out so nobody has to edit the pipeline file (and so pod
+hardware serials don't end up committed to Git history):
+
+| Variable | Value |
+|---|---|
+| `MERAKI_API_KEY` | your personal Meraki Dashboard API key |
+| `org_name` | your workshop's Meraki organization name |
+| `branch_name` | your pod's unique network name |
+| `branch_mx_serial` | your pod's MX appliance serial |
+| `branch_ms_serial` | your pod's MS switch serial |
+| `branch_cw_serial` | your pod's CW access point serial |
+
+Everything else the pipeline needs (shared hub network name, example SNMP/
+RADIUS/local-status-page credentials, Terraform state backend settings) is
+already defined inline in `.gitlab-ci.yml` and needs no changes.
+
 ## YAML syntax quick reference
 
 - **`!env VAR_NAME`** - resolves to the value of environment variable
