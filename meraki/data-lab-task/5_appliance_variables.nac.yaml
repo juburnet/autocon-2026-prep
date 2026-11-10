@@ -5,13 +5,7 @@ meraki:
       organizations:
         - name: !env org_name
           networks:
-            - name: Unified Branch 1
-              templates:
-                - app_fw
-                - app_content
-                - app_intrusion
-                - app_mal
-            - name: Unified Branch 2
+            - name: !env branch_name
               templates:
                 - app_fw
                 - app_content

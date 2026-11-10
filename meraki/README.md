@@ -26,8 +26,8 @@ model (matching on `name` at each nesting level), and applies the result. This m
 - An `.env` (or exported shell vars) providing the `!env`-tagged values referenced
   across the `data/*.yaml` files, e.g.:
   - `org_name`
-  - `branch1_mx_serial`, `branch1_ms_serial`, `branch1_cw_serial`
-  - `branch2_mx_serial`, `branch2_ms_serial`, `branch2_cw_serial`
+  - `branch_name`
+  - `branch_mx_serial`, `branch_ms_serial`, `branch_cw_serial`
   - `vpn_hub_network_name`
   - `local_page_username`, `local_page_password`
   - `snmp_username`, `snmp_passphrase`
@@ -39,7 +39,7 @@ model (matching on `name` at each nesting level), and applies the result. This m
 | File | Introduces |
 |---|---|
 | `data/1_org_global.nac.yaml` | Org-wide settings: admin, `login_security` policy, org-level SNMP (v3), and the org-wide `appliance.vpn_firewall_rules` shared by every spoke via the hub. |
-| `data/2_networks.nac.yaml` | The two branch networks (`Unified Branch 1`, `Unified Branch 2`) and the unmanaged hub network. Covers network-level basics (product types, time zone, tags, local status page, SNMP, syslog, NetFlow, group policies), the MX appliance device, and appliance config authored directly as YAML: `appliance.vlans`, `appliance.vpn_site_to_site_vpn` (spoke config), `appliance.ports`, and `appliance.traffic_shaping`. |
+| `data/2_networks.nac.yaml` | The branch network (named via `!env branch_name` — unique per attendee pod) and the unmanaged hub network. Covers network-level basics (product types, time zone, tags, local status page, SNMP, syslog, NetFlow, group policies), the MX appliance device, and appliance config authored directly as YAML: `appliance.vlans`, `appliance.vpn_site_to_site_vpn` (spoke config), `appliance.ports`, and `appliance.traffic_shaping`. |
 | `data/3_switching.nac.yaml` | The MS switch device per branch, with per-port-range overrides (uplink trunk, infra access ports disabled by default, AP trunk, end-user access ports with voice VLAN), switch-wide settings (management VLAN, MTU, QoS, storm control), and the wired 802.1X access policy. Depends conceptually on the VLANs defined in step 2. |
 | `data/4_wireless.nac.yaml` | The CW access point device per branch (claimed with tags/location only — no RF profile reference, to avoid a known apply-ordering issue, see below) plus network-level `wireless.rf_profiles` and `wireless.ssids` (`Data` 802.1X/RADIUS SSID, `Guest` open/splash-page SSID). |
 | `data/5_appliance_templates.nac.yaml` + `data/5_appliance_variables.nac.yaml` | Introduces the templating/indirection pattern, as a paired step — deployed together since one is meaningless without the other. `5_appliance_templates.nac.yaml` is the template library (`app_fw`, `app_content`, `app_intrusion`, `app_mal`); `5_appliance_variables.nac.yaml` applies those templates to each branch network via `templates:`. Read both together once the direct-YAML pattern from steps 1-4 is already familiar. |

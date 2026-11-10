@@ -14,7 +14,7 @@ two files sharing a prefix because they are a matched pair:
 ```yaml
 # 5_appliance_variables.nac.yaml (excerpt)
 networks:
-  - name: Unified Branch 1
+  - name: !env branch_name
     templates:
       - app_fw
       - app_content
@@ -22,7 +22,7 @@ networks:
       - app_mal
 ```
 
-The nac module matches `name: Unified Branch 1` against the network already
+The nac module matches `name: !env branch_name` against the network already
 defined in step 2 and deep-merges the four templates' configuration into it.
 Change a rule in the template once, and it propagates to every network that
 references it - the same reusability/consistency/maintainability trade-off

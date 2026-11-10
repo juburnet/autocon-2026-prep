@@ -19,8 +19,3 @@ module "meraki" {
   write_model_file = "meraki_merged_configuration.nac.yaml"
 }
 
-# State: GitLab-managed remote state via the `http` backend above. The
-# backend has no address here on purpose — it's entirely configured via
-# TF_HTTP_* environment variables set in meraki/.gitlab-ci.yml, so no
-# local terraform.tfstate file or GitLab CI `cache:` key is needed.
-

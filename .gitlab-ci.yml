@@ -1,25 +1,40 @@
 # .gitlab-ci.yml — autocon-2026-prep
 #
-# Thin multidomain orchestrator: triggers an independent child pipeline per
-# domain (meraki/, ios-xe/) only when that domain's data/ directory changes.
-# Each domain gets its own image + module-version pairing, which is why they
-# run as separate child pipelines instead of sharing one top-level image:
-#   - meraki/.gitlab-ci.yml  -> image: danischm/nac:0.1.6
-#   - ios-xe/.gitlab-ci.yml  -> image: danischm/nac:0.4.1
+# Single flat pipeline for the Meraki-only workshop lab. There is no longer
+# a root-orchestrator + child-pipeline split (that pattern existed to run
+# meraki/ and ios-xe/ as independent domains with different image/module
+# pairings); now there's exactly one domain, one image
+# (danischm/nac:0.1.6, matching netascode/terraform-meraki-nac-meraki
+# v0.9.0 pinned in meraki/main.tf), and one set of stages.
 #
-# Both trigger jobs share one `deploy` stage and have no `needs:` between
-# them, so when both domains change in the same push they run in parallel,
-# fully independent of each other — neither waits on the other to finish.
+# Required CI/CD variable (Settings > CI/CD > Variables, masked+protected
+# — this is the one real secret, so it stays out of this file):
+#   MERAKI_API_KEY
 #
-# Hybrid trigger: each job auto-runs when its own data/ changes (same as
-# before). If nothing changed there, it still appears in the pipeline as a
-# manual (▶) job, so you can deploy one domain on demand without touching
-# the other — e.g. to force a redeploy, or run ios-xe only even though only
-# meraki/data changed in this push. allow_failure: true on that manual rule
-# means leaving it un-clicked never blocks or fails the pipeline.
+# org_name / branch_* below are placeholders (XXX) — fill in the real org
+# ID and device serials for your lab before running the pipeline. The rest
+# are the test-lab-only example credentials from .env.example (not real
+# secrets).
 #
-# See meraki/.gitlab-ci.yml and ios-xe/.gitlab-ci.yml for required CI/CD
-# variables and the validate/plan/deploy/test stage behavior within each.
+# State: GitLab-managed remote state via Terraform's `http` backend
+# (declared empty in meraki/main.tf, configured entirely through the
+# TF_HTTP_* variables below — derived from predefined CI/CD variables,
+# no extra secrets needed). TF_HTTP_SKIP_CERT_VERIFICATION is "true"
+# because this lab's GitLab instance uses a self-signed certificate.
+# State is keyed per-branch via TF_STATE_NAME so each branch/MR gets its
+# own state instead of sharing one.
+#
+# Stage policy:
+#   - validate: runs on every push (MR, main, or plain branch) via
+#     .rules_always, so attendees get fast feedback even without an MR.
+#   - plan: runs on MR or main via .rules_mr_or_main.
+#   - deploy / idempotency-test / config-test: main only, via
+#     .rules_main_only.
+#   - rollback: main only, in GitLab's implicit `.post` stage, only
+#     when: on_failure — a safety net that destroys any partially-applied
+#     resources if deploy fails.
+
+image: danischm/nac:0.1.6
 
 workflow:
   rules:
@@ -28,33 +43,168 @@ workflow:
       when: never
     - if: '$CI_COMMIT_BRANCH'
 
+variables:
+  TF_IN_AUTOMATION: "true"
+  GIT_DEPTH: "0"
+  TF_STATE_NAME: "meraki-${CI_COMMIT_REF_SLUG}"
+  TF_HTTP_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}"
+  TF_HTTP_LOCK_ADDRESS: "${TF_HTTP_ADDRESS}/lock"
+  TF_HTTP_UNLOCK_ADDRESS: "${TF_HTTP_ADDRESS}/lock"
+  TF_HTTP_LOCK_METHOD: "POST"
+  TF_HTTP_UNLOCK_METHOD: "DELETE"
+  TF_HTTP_USERNAME: "${GITLAB_USER_LOGIN}"
+  TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
+  TF_HTTP_SKIP_CERT_VERIFICATION: "true"
+  org_name: "XXX"
+  branch_name: "XXX"
+  branch_mx_serial: "XXX"
+  branch_ms_serial: "XXX"
+  branch_cw_serial: "XXX"
+  vpn_hub_network_name: "Datacenter"
+  org_admin: "admin"
+  org_admin_email: "admin-branch@netascode.cisco.com"
+  v3_auth_pass: "Cisco12345"
+  v3_priv_pass: "Cisco12345"
+  local_status_page_username: "admin"
+  local_page_username: "admin"
+  local_status_page_password: "Cisco!12345C60972A"
+  local_page_password: "Cisco!12345C60972A"
+  radius_accounting_server_secret: "Cisco12345!"
+  radius_server_secret: "Cisco12345!"
+  snmp_username: "admin"
+  snmp_passphrase: "Cisco!12345C60972A"
+
 stages:
+  - validate
+  - plan
   - deploy
+  - test
 
-deploy_meraki:
-  stage: deploy
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      changes: [meraki/data/**/*]
-    - if: '$CI_COMMIT_BRANCH'
-      changes: [meraki/data/**/*]
-    - when: manual
-      allow_failure: true
-  trigger:
-    include:
-      - local: meraki/.gitlab-ci.yml
-    strategy: depend
+.rules_always: &rules_always
+  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  - if: '$CI_COMMIT_BRANCH'
 
-deploy_iosxe:
+.rules_mr_or_main: &rules_mr_or_main
+  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+.rules_main_only: &rules_main_only
+  - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+validate:
+  stage: validate
+  rules: *rules_always
+  script:
+    - cd meraki
+    - echo "Checking Terraform formatting..."
+    - terraform fmt -check -recursive | tee fmt_output.txt
+    - '! grep -qE "\.tf" fmt_output.txt'
+    - echo "Generating merged configuration..."
+    - terraform init -input=false
+    - terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
+    - test -f meraki_merged_configuration.nac.yaml
+    - echo "Running nac-validate..."
+    - nac-validate ./meraki_merged_configuration.nac.yaml | tee validate_output.txt
+    - '! grep -q "ERROR" validate_output.txt'
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/fmt_output.txt
+      - meraki/validate_output.txt
+      - meraki/meraki_merged_configuration.nac.yaml
+
+plan:
+  stage: plan
+  needs: ["validate"]
+  rules: *rules_mr_or_main
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - terraform plan -out=plan.tfplan -input=false
+    - terraform show -no-color plan.tfplan > plan.txt
+    - terraform show -json plan.tfplan | jq > plan.json
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/plan.tfplan
+      - meraki/plan.txt
+      - meraki/plan.json
+
+deploy:
   stage: deploy
+  needs: ["plan"]
+  rules: *rules_main_only
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - terraform apply -input=false -auto-approve plan.tfplan
+
+idempotency-test:
+  stage: test
+  needs: ["deploy"]
+  rules: *rules_main_only
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - echo "Regenerating merged configuration (not preserved in deploy artifacts)..."
+    - terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
+    - set +e
+    - terraform plan -input=false -out=idempotency.tfplan -detailed-exitcode
+    - rc=$?
+    - set -e
+    - terraform show -no-color idempotency.tfplan > idempotency_plan.txt
+    - |
+      if [ "$rc" -eq 2 ]; then
+        echo "Terraform plan detected changes! Idempotency test failed."
+        cat idempotency_plan.txt
+        exit 1
+      elif [ "$rc" -eq 0 ]; then
+        echo "Terraform is idempotent. No changes detected."
+      else
+        echo "terraform plan failed with exit code $rc"
+        exit "$rc"
+      fi
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/idempotency_plan.txt
+      - meraki/idempotency.tfplan
+
+config-test:
+  stage: test
+  needs: ["deploy"]
+  rules: *rules_main_only
+  script:
+    - cd meraki
+    - terraform init -input=false
+    - echo "Regenerating merged configuration (not preserved in deploy artifacts)..."
+    - terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
+    - |
+      if [ -d tests/templates ]; then
+        sleep 60
+        nac-test -d ./meraki_merged_configuration.nac.yaml -t ./tests/templates -o ./tests/results | tee test_output.txt
+      else
+        echo "No tests/templates directory under meraki/ — skipping config test."
+      fi
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - meraki/tests/results/
+      - meraki/test_output.txt
+
+rollback:
+  stage: .post
+  needs: ["deploy"]
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      changes: [ios-xe/data/**/*]
-    - if: '$CI_COMMIT_BRANCH'
-      changes: [ios-xe/data/**/*]
-    - when: manual
-      allow_failure: true
-  trigger:
-    include:
-      - local: ios-xe/.gitlab-ci.yml
-    strategy: depend
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_failure
+  script:
+    - cd meraki
+    - echo "Deploy failed — destroying Terraform-managed resources to roll back."
+    - terraform init -input=false
+    - terraform destroy -auto-approve -input=false || true

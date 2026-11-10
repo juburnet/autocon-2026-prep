@@ -1,8 +1,8 @@
 # Step 2 - `data/2_networks.nac.yaml`: networks and the MX appliance
 
-This is the largest file and introduces the two branch networks (`Unified
-Branch 1`, `Unified Branch 2`) plus an unmanaged hub network referenced by
-`!env vpn_hub_network_name`. For each branch it covers:
+This is the largest file and introduces the branch network (named via `!env
+branch_name` — unique per attendee pod) plus an unmanaged hub network
+referenced by `!env vpn_hub_network_name`. For the branch it covers:
 
 - Network basics: `product_types` (appliance/switch/wireless), time zone,
   tags, local status page credentials, SNMP, syslog, NetFlow, and

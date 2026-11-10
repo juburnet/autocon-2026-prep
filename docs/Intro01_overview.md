@@ -3,9 +3,9 @@
 This guide walks through both halves of the Autocon 2026 Network-as-Code lab,
 in order:
 
-- **Part 1 - Meraki**, five steps authoring a two-branch Meraki network
-  (appliance, switch, wireless) directly in YAML, ending on a
-  templating/indirection capstone.
+- **Part 1 - Meraki**, five steps authoring a single-branch Meraki network
+  (one per shared pod, appliance/switch/wireless) directly in YAML, ending
+  on a templating/indirection capstone.
 - **Part 2 - IOS-XE**, four steps building a simple L3 spine/leaf fabric
   (VLANs + routed point-to-point uplinks), ending on the same
   templating/indirection pattern so the two halves reinforce each other.
