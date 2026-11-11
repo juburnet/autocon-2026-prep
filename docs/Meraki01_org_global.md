@@ -41,10 +41,13 @@ of mistakes, both running before anything touches the Dashboard:
 
 ### Try it: a syntax failure
 
-`login_security.num_different_passwords` in this file is `5`. `meraki/
-.schema.yaml` declares that field as `int(min=5, required=False)` - `5` is
+`login_security.num_different_passwords` in this file is `5`. `meraki/.schema.yaml` declares that field as `int(min=5, required=False)` - `5` is
 the lowest legal value. Temporarily lower it to `3` and regenerate + check
 the merged model, exactly like the CI `validate` stage does:
+
+The `terraform apply` below is limited by `-target` to the one resource that
+writes the merged model file to disk. It does **not** contact the Dashboard or
+change any configuration.
 
 ```sh
 cd meraki
@@ -60,8 +63,8 @@ back to `5` when you're done.
 
 `meraki/rules/101_admin_name.py` is a custom rule: it rejects any
 administrator named `root`. Temporarily change `administrator.name` above
-from `admin` to `root`, then run the business-rule check (installs and runs
-separately from the schema check, per `meraki/README.md`):
+from `admin` to `root`, then run the business-rule check (a separate tool
+from the schema check above; see `meraki/README.md`):
 
 ```sh
 pip install iac-validate
