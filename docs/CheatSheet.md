@@ -69,10 +69,9 @@ pipeline (`.gitlab-ci.yml`) doesn't read `.env` - it needs its own copy of
 your pod-specific values, set as **GitLab CI/CD Variables** instead
 (Project → Settings → CI/CD → Variables → **Add variable**).
 
-When you add `MERAKI_API_KEY` (masked + protected), add these 5 alongside
-it - they used to be hardcoded placeholders inside `.gitlab-ci.yml`, but
-have been moved out so nobody has to edit the pipeline file (and so pod
-hardware serials don't end up committed to Git history):
+When you add `MERAKI_API_KEY` (masked + protected), also add the five pod-specific variables below. They are kept out of
+`.gitlab-ci.yml` so nobody has to edit the pipeline file (and so pod hardware
+serials don't end up committed to Git history):
 
 | Variable | Value |
 |---|---|
@@ -95,8 +94,7 @@ already defined inline in `.gitlab-ci.yml` and needs no changes.
   stable.
 - **Merge by `name`** - the `nac-*` Terraform modules read every YAML file
   under `data/`, deep-merging them into one model by matching `name` at each
-  nesting level. Two files both containing `name: Unified Branch 1` (or
-  `name: !env branch_name`) merge into a single object instead of producing
+  nesting level. Two files both containing `name: !env branch_name` merge into a single object instead of producing
   two.
 - **File naming is reading order, not deployment order** - numeric prefixes
   (`1_`, `2_`, `3_`...) are a suggested teaching path; Terraform builds its

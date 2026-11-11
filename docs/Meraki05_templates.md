@@ -47,6 +47,12 @@ Change a rule in the template once, and it propagates to every network that
 references it - the same reusability/consistency/maintainability trade-off
 you'll see again in IOS-XE Part 2, step 4.
 
+!!! warning "The name must match exactly"
+    Merging is by `name`. If the `name` under `networks:` in
+    `5_appliance_variables.nac.yaml` doesn't match the network from step 3
+    exactly, the module creates a second, separate network instead of
+    merging. Always use `!env branch_name` in both files.
+
 ---
 
 **← Previous:** [Wireless](Meraki04_wireless.md) · **Next:** [Applying Part 1](Meraki06_applying.md)
