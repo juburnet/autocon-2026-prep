@@ -84,13 +84,13 @@ terraform apply
 
 ## Testing
 
-- `rules/` holds [`iac-validate`](https://github.com/netascode/iac-validate) semantic
+- `rules/` holds [`nac-validate`](https://github.com/netascode/nac-validate) semantic
   rules (e.g. `201_unique_device_host.py` blocks two devices sharing the same
   `host`/management IP):
 
   ```sh
-  pip install iac-validate
-  iac-validate -r rules data/**/*.nac.yaml
+  pip install nac-validate
+  nac-validate -r rules data/**/*.nac.yaml
   ```
 
 - `tests/templates/` holds a [`nac-test`](https://github.com/netascode/nac-test)

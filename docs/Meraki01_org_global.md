@@ -67,8 +67,8 @@ from `admin` to `root`, then run the business-rule check (a separate tool
 from the schema check above; see `meraki/README.md`):
 
 ```sh
-pip install iac-validate
-iac-validate -r rules data/*.nac.yaml
+pip install nac-validate
+nac-validate -r rules data/*.nac.yaml
 ```
 
 This fails with a `HIGH` severity violation on rule `101` - the YAML is
