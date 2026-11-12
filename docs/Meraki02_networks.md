@@ -2,8 +2,9 @@
 
 ## Move this step's file into place
 
-Move (don't copy) this step's file into `data/`, the same way you did for
-step 1 - `data-lab-task/` is never read by Terraform:
+Move this step's file into `data/`, the same way you did for step 1 -
+`data-lab-task/` is never read by Terraform. Copying works just as well as
+moving, as long as the file ends up in `data/`:
 
 ```sh
 cd meraki

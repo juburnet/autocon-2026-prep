@@ -1,7 +1,7 @@
 # Step 7 - `data/5_appliance_templates.nac.yaml` + `data/5_appliance_variables.nac.yaml`: templates
 
 !!! tip "Move this step's files into place"
-    Move both `data-lab-task/5_appliance_templates.nac.yaml` and
+    Move (or copy) both `data-lab-task/5_appliance_templates.nac.yaml` and
     `data-lab-task/5_appliance_variables.nac.yaml` into `data/` together -
     they're a matched pair, and the variables file has nothing to reference
     without the template library already in place.

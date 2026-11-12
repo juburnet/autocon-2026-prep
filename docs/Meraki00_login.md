@@ -14,8 +14,8 @@ with the email address from your lab reservation.
 
 If your account has access to multiple organizations, click the organization
 name in the top-left corner and select the lab organization - it follows the
-naming pattern `Org-[org_id]` (for example, `Org-549236` - the brackets are
-not literal, and the ID is an opaque number of 6-18 digits).
+naming pattern `Org-[org_id]` (for example, `Org-3665367146726167151` - the
+brackets are not literal, and the ID is an opaque number of 6-19 digits).
 
 ## Step 2 - Generate Your Meraki API Key
 
@@ -40,7 +40,10 @@ We will be authenticating to Meraki using a personal API key tied to your dashbo
         your dashboard login does. This lab's first steps configure
         org-level settings (login security, SNMP, VPN firewall rules), so
         your lab account needs **full organization** admin access, not just
-        network-level access, for Terraform to apply them. See the
+        network-level access, for Terraform to apply them - your lab
+        account is already provisioned with full organization admin access
+        in this lab's organization, so no action is needed from you here.
+        See the
         [Meraki Developer Hub authorization docs](https://developer.cisco.com/meraki/api-v1/authorization/)
         for how API key permissions map to admin roles.
 

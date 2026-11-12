@@ -7,14 +7,11 @@ WSL as the Linux shell that runs Terraform.
 ## Accessing your lab machine
 
 This lab runs on a shared Windows jump machine with VS Code, WSL, and
-Terraform already installed - connect to it over RDP (Remote Desktop
-Protocol):
+Terraform already installed - connect to it through WebRDP.
 
-1. On Windows, open **Remote Desktop Connection** (search for `mstsc` in the
-   Start menu, or press ++win+r++ and type `mstsc`).
-2. Enter the jump machine address from the Cheat Sheet's **Lab access**
-   table and click **Connect**.
-3. Sign in with the username/password from the same table.
+!!! note "WebRDP connection steps coming soon"
+    Instructions for connecting to your jump machine over WebRDP will be
+    added here shortly.
 
 !!! tip "Working from your own computer instead"
     If you'd rather use your own laptop instead of RDP-ing into the jump
@@ -101,10 +98,6 @@ folder, each with its own `main.tf`, `data/`, and `data-lab-task/`.
 git clone <lab-repo-url> /Desktop/network-as-code
 ```
 
-!!! note "Repo URL"
-    Your lab instructions/Cheat Sheet will give you the exact repository URL
-    to clone for this event.
-
 ### Open VS Code
 
 To begin working with your project in a development-friendly environment,
@@ -115,21 +108,52 @@ open your project folder in VS Code:
 3. In the address bar, type or paste: `/Desktop/network-as-code`.
 4. Click **OK**.
 
-### Enable Autosave
+### Check Autosave is on
 
 Throughout this lab you'll switch frequently between editing YAML in VS Code
-and running Terraform in the WSL terminal. Turning on Autosave means every
-edit is written to disk immediately, so the terminal always sees your latest
-changes without you having to remember to save manually.
+and running Terraform in the WSL terminal. Autosave means every edit is
+written to disk immediately, so the terminal always sees your latest changes
+without you having to remember to save manually. It should already be enabled
+on your lab machine - just confirm it before you start editing:
 
 1. Click **File** in the VS Code menu bar.
-2. Click **Auto Save** to toggle it on - a checkmark appears next to it when
-   enabled.
+2. Check that **Auto Save** already has a checkmark next to it. If not,
+   click it to turn it on.
 
 !!! tip "Verify it's on"
     With Auto Save enabled, the dot on a file's editor tab (shown for
     unsaved changes) disappears a moment after you stop typing, instead of
     staying until you press ++cmd+s++ / ++ctrl+s++.
+
+### Project structure
+
+Before touching Terraform or `.env`, take a quick look at what's actually
+inside `/Desktop/network-as-code` - knowing where things live now saves
+confusion later:
+
+```text
+network-as-code/
+├── .env.example          # template for your pod's secrets/variables
+├── meraki/               # Part 1 - Meraki track
+│   ├── main.tf           # the Terraform module block for this track
+│   ├── data/             # what Terraform actually reads - starts nearly empty
+│   ├── data-lab-task/    # staged files you move into data/ one step at a time
+│   ├── rules/            # nac-validate semantic rules
+│   └── tests/            # nac-test Robot Framework suite
+└── ios-xe/               # Part 2 - IOS-XE track
+    ├── main.tf
+    ├── data/
+    ├── data-lab-task/
+    ├── rules/
+    └── tests/
+```
+
+Both tracks follow the same shape: a `main.tf` driving an nac module, the
+`data/` folder that module actually reads, a `data-lab-task/` folder of files
+you move into `data/` one at a time as the lab progresses, `rules/` for
+validation, and `tests/` for post-deploy checks. You'll only ever work inside
+one track's folder at a time - commands like `terraform plan` always run
+from inside `meraki/` or `ios-xe/`, never from the repo root.
 
 ### Terraform: the `main.tf` file
 

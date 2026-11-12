@@ -69,7 +69,7 @@ Edit the `.env` file you copied from `.env.example` earlier, and set
 `org_name` to your Org ID (from your welcome email or the Meraki Dashboard):
 
 ```sh
-export org_name=Org-123455
+export org_name=Org-3665367146726167151
 ```
 
 You were also given the serial numbers for your pod's devices - set those
@@ -83,7 +83,8 @@ export branch_cw_serial=
 ```
 
 `branch_name` can be anything unique to you - for example `"Shawn's
-Network"` - just make sure it doesn't collide with your pod partner's.
+Network"` - just pick something specific to you (like your own name), since
+two branch networks share this organization.
 
 !!! note "`!env` vs `${...}` - two different variable mechanisms"
     `!env VAR` (used throughout this file) pulls a value from your shell
@@ -116,16 +117,12 @@ at
   the field you're about to break on purpose below.</figcaption>
 </figure>
 
-**Key idea:** `!env org_name` and similar tags are how secrets and
-environment-specific values stay out of version control while the YAML
-structure itself stays stable.
-
 !!! tip "Why `data/` only has one file so far"
     `meraki/data/` - the directory Terraform actually reads - starts with
     just `1_org_global.nac.yaml` in place. Every later step's file lives in
-    `meraki/data-lab-task/` until it's that step's turn: you **move** (not
-    copy) each file into `data/` as you reach it, which is what actually adds
-    it to the merged model. `data-lab-task/` itself is never read by
+    `meraki/data-lab-task/` until it's that step's turn: you move (or copy)
+    each file into `data/` as you reach it, which is what actually adds it
+    to the merged model. `data-lab-task/` itself is never read by
     Terraform - it's a staging shelf, not a second source of truth.
 
 ## Validating before you deploy

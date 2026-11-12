@@ -84,7 +84,7 @@ real values replaced):
       "provider": "provider[\"registry.terraform.io/ciscodevnet/meraki\"]",
       "instances": [
         {
-          "index_key": "US/Org-123455/Shawn's Network",
+          "index_key": "US/Org-3665367146726167151/Shawn's Network",
           "attributes": {
             "id": "L_1234567890123",
             "name": "Shawn's Network",
