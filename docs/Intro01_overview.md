@@ -163,4 +163,4 @@ By completing this lab, you will gain hands-on experience with:
 
 ---
 
-**Next:** [Part 1 - Meraki: org and global settings](Meraki01_org_global.md){.next-only}
+**Next:** [Part 1 - Meraki: log in](Meraki00_login.md){.next-only}

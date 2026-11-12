@@ -23,8 +23,6 @@ open - new terms appear across almost every step.
 | BYOA | Bring Your Own Account - the model used for Meraki Dashboard access in this lab: you use your own Dashboard account and API key, shared one organization per two participants. See [Lab access](Intro01_overview.md#lab-access-byoa-model). |
 | dCloud | Cisco's demo / lab cloud environment - where this lab is hosted. |
 
-*We'll keep expanding this list with terms specific to this lab as we go.*
-
 ---
 
 **← Back to:** [Overview](Intro01_overview.md)
