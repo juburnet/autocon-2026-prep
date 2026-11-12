@@ -30,20 +30,21 @@ iosxe:
               name: MGMT
 ```
 
-`4_templates_assignment.nac.yaml` - the reference, merging into the `LEAVES`
-group from step 3 by matching `name: LEAVES`:
+`4_templates_assignment.nac.yaml` - the reference, merging into the
+`ACCESS_SWITCHES` group from step 3 by matching `name: ACCESS_SWITCHES`:
 
 ```yaml
 ---
 iosxe:
   device_groups:
-    - name: LEAVES
+    - name: ACCESS_SWITCHES
       templates:
         - access_switch_vlans
 ```
 
-After `terraform apply`, VLANs 10/20/99 land on **Leaf1-4 only** - not on the
-border-spines, which are never added to this template reference.
+After `terraform apply`, VLANs 10/20/99 land on **Access1 and Access2
+only** - not on `Border`/`Core`, which are never added to this template
+reference.
 
 **Key idea:** the same deep-merge-by-name mechanic as Meraki's templates
 step - NaC reads the template library, finds where it's referenced (here, a

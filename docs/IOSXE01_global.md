@@ -6,29 +6,17 @@ Prerequisites (provider credentials, devices table) are in `ios-xe/README.md` - 
 (global → device group → device precedence, variables, `model` templates)
 follow the upstream
 [`nac-iosxe-learning-lab`](https://netascode.github.io/nac-iosxe-learning-lab/)
-Tasks 03/04/06/07 almost verbatim, adapted to this lab's actual 6-device
-spine/leaf fabric.
+Tasks 03/04/06/07 almost verbatim, adapted to this lab's actual 4-device
+topology.
 
-The fabric itself is intentionally simple: **L3 only** - VLANs for
-access-layer traffic, plus routed, dual-homed point-to-point uplinks from
-each leaf to both border-spines. No BGP/EVPN. Each leaf is dual-homed: one
-uplink to Border-Spine1, one to Border-Spine2.
-
-| Leaf | Leaf port | Border-Spine1 port | Border-Spine2 port |
-|---|---|---|---|
-| Leaf1 | Gi1/0/1 ↔ BS1 Gi1/0/2 | Gi1/0/2 | - |
-| Leaf1 | Gi1/0/2 ↔ BS2 Gi1/0/2 | - | Gi1/0/2 |
-| Leaf2 | Gi1/0/1 ↔ BS1 Gi1/0/3 | Gi1/0/3 | - |
-| Leaf2 | Gi1/0/2 ↔ BS2 Gi1/0/3 | - | Gi1/0/3 |
-| Leaf3 | Gi1/0/1 ↔ BS1 Gi1/0/4 | Gi1/0/4 | - |
-| Leaf3 | Gi1/0/2 ↔ BS2 Gi1/0/4 | - | Gi1/0/4 |
-| Leaf4 | Gi1/0/1 ↔ BS1 Gi1/0/5 | Gi1/0/5 | - |
-| Leaf4 | Gi1/0/2 ↔ BS2 Gi1/0/5 | - | Gi1/0/5 |
-
-Fabric addressing lives in `10.255.0.0/16`, separate from the existing
-`198.18.128.0/18` management range: `Loopback0` (`/32`) identifies each
-device, uplinks to Border-Spine1 come from `10.255.11.0/24` (`/30` per leaf),
-uplinks to Border-Spine2 from the equivalent `/30` in `10.255.12.0/24`.
+The topology is intentionally simple: `Border`, `Core`, `Access1`, and
+`Access2` - four IOS-XE devices, plus two Alpine Linux hosts (`Host1`,
+`Host2`) attached to `Access1`/`Access2` for end-to-end connectivity testing.
+Every device shares a single management subnet, `198.18.128.0/18`, on VLAN1.
+No interface or uplink wiring is modeled in the YAML - only device identity
+(`name`/`host`/`HOSTNAME`) and, from step 3 onward, shared config applied via
+device groups and templates. See `ios-xe/README.md` for the full addressing
+table.
 
 ## Step 1 - `data/1_global.nac.yaml`: global configuration and variables
 
@@ -36,7 +24,7 @@ Global configuration applies to **every** registered device unless overridden
 at the device-group or device level - the precedence hierarchy is device >
 device group > global. This file defines two things:
 
-- A **global variable**, `${SITE}`, set once and inherited by all 6 devices.
+- A **global variable**, `${SITE}`, set once and inherited by all 4 devices.
 - A login banner and `system.hostname` that both reference `${HOSTNAME}` - a
   variable that doesn't exist yet at this level. It's defined **per device**
   in step 2, so the same global template resolves to a different literal
@@ -66,4 +54,4 @@ sections (banner text *and* the `hostname` CLI command).
 
 ---
 
-**← Previous:** [Applying Part 1](Meraki06_applying.md) · **Next:** [Devices and uplinks](IOSXE02_devices.md)
+**← Previous:** [Applying Part 1](Meraki06_applying.md) · **Next:** [Devices](IOSXE02_devices.md)

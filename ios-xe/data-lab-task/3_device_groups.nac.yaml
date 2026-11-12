@@ -5,3 +5,12 @@ iosxe:
       devices:
         - Access1
         - Access2
+      configuration:
+        access_lists:
+          standard:
+            - name: AccessLayerACL
+              entries:
+                - sequence: 10
+                  action: permit
+                  prefix: 198.18.128.0
+                  prefix_mask: 0.0.63.255

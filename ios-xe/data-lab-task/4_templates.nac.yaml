@@ -1,0 +1,14 @@
+---
+iosxe:
+  templates:
+    - name: access_switch_vlans
+      type: model
+      configuration:
+        vlan:
+          vlans:
+            - id: 10
+              name: DATA
+            - id: 20
+              name: VOICE
+            - id: 99
+              name: MGMT

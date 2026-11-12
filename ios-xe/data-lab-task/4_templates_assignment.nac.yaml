@@ -1,0 +1,6 @@
+---
+iosxe:
+  device_groups:
+    - name: ACCESS_SWITCHES
+      templates:
+        - access_switch_vlans
