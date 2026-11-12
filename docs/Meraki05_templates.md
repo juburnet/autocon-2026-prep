@@ -1,4 +1,4 @@
-# Step 6 - `data/5_appliance_templates.nac.yaml` + `data/5_appliance_variables.nac.yaml`: templates
+# Step 7 - `data/5_appliance_templates.nac.yaml` + `data/5_appliance_variables.nac.yaml`: templates
 
 !!! tip "Move this step's files into place"
     Move both `data-lab-task/5_appliance_templates.nac.yaml` and

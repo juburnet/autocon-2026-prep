@@ -1,4 +1,4 @@
-# Step 5 - `data/4_wireless.nac.yaml`: the CW access point and SSIDs
+# Step 6 - `data/4_wireless.nac.yaml`: the CW access point and SSIDs
 
 !!! tip "Move this step's file into place"
     Move `data-lab-task/4_wireless.nac.yaml` into `data/` before you run

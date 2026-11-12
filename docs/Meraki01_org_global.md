@@ -1,4 +1,56 @@
-# Step 2 - `data/1_org_global.nac.yaml`: org and global settings
+# Step 3 - `data/1_org_global.nac.yaml`: org and global settings
+
+As noted, each lab pod consist of the two networks, hence 2 users will be sharing the same Organization. 
+The Organization is aleady pre-configrued. 
+In the Organization we also pre-configured Datacenter network that each of the BRanches will be VPN' into. 
+
+In this step we will evaluate some basic organizational level settings to help us getting started understanding the basic principles. 
+
+ An organization in Cisco Meraki is the highest-level container or root account in the cloud dashboard hierarchy. It represents a single company, institution, department etc. The Networks are configured as part of the Organization it belongs to. 
+
+Open the `/data/org_global.nac.yaml` file and review the configuration. You will find the initial block with enviromental variables:
+
+```
+      organizations:
+        - name: !env org_name
+          managed: false
+          login_security:
+            enforce_password_expiration: false
+            password_expiration_days: 40
+            enforce_different_passwords: true
+            num_different_passwords: 5
+            enforce_strong_passwords: true
+            enforce_account_lockout: true
+            account_lockout_attempts: 5
+            enforce_idle_timeout: true
+            idle_timeout_minutes: 90
+            ```
+
+In particular, notice that the organization name configured uses the org_name variable (identified with `!env'). We need to configure this value and we will do that first in .env file, and later on, in the CICD variables. 
+
+Edit the .env that you previouysly copied from .env.example, and copy your Org-ID (either from email or Meraki dashboard) so it looks like something like `export org_name=Org-123455`. 
+
+You also received from us the Serial Numbers associated with your branch. Populate them in the file as well:
+
+export branch_name=
+export branch_mx_serial=
+export branch_ms_serial=
+export branch_cw_serial=
+
+
+You can pick your own Branch Name - for example "Shawn's Network". 
+
+Review the remaining confguration. This is a simple Organization creation example with a few basic features to demonstrate the ease of creation of an Organization using Automation.
+If you wish, you can modify any of the settings in the login security sections.
+
+Documentation Reference
+
+But how do you know what configuration options are supported, and what the correct YAML structure is?
+
+The data model documentation is published on the Network-as-Code website. Specifically for login settings we can see the documentation at https://netascode.cisco.com/docs/data_models/meraki/organizations/general_management/login_security/. 
+
+
+
 
 The organization level is where settings apply to *everything* below it,
 regardless of network or device. This file sets:
@@ -48,12 +100,6 @@ check the merged model. The `terraform apply` below is limited by `-target`
 to the one resource that writes the merged model file to disk - it does
 **not** contact the Dashboard or change any configuration, exactly like the
 CI `validate` stage:
-
-<figure markdown="span">
-  ![Network as Code docs - Organization Login Security Configuration](assets/docs.png)<figcaption>The
-  `netascode.cisco.com` schema reference for `organizations.login_security` -
-  the field you're about to break on purpose in `1_org_global.nac.yaml`.</figcaption>
-</figure>
 
 ```sh
 cd meraki

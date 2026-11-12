@@ -1,4 +1,4 @@
-# Step 4 - `data/3_switching.nac.yaml`: the MS switch
+# Step 5 - `data/3_switching.nac.yaml`: the MS switch
 
 !!! tip "Move this step's file into place"
     Move `data-lab-task/3_switching.nac.yaml` into `data/` before you run
