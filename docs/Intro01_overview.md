@@ -103,7 +103,7 @@ the instructions in the email to accept the invite.
 
 
 <figure markdown="span">
-  ![Meraki Dashboard - create password](assets/image2.png)<figcaption>Creating
+  ![Meraki Dashboard - create password](assets/image2.png){ width="70%" }<figcaption>Creating
   your Dashboard password on first login.</figcaption>
 </figure>
 
@@ -112,7 +112,7 @@ If this is your first time accessing Meraki Dashboard with this email, the
 message will guide you to create a password.
 
 <figure markdown="span">
-  ![Meraki Dashboard - organization selector](assets/image3.png)<figcaption>Selecting
+  ![Meraki Dashboard - organization selector](assets/image3.png){ width="70%" }<figcaption>Selecting
   your shared lab organization from the top-left org switcher.</figcaption>
 </figure>
 
@@ -144,10 +144,11 @@ differ by platform:
 | 4. Transport | How the provider talks to the platform | HTTPS / REST to the Meraki Dashboard API | NETCONF over SSH (TCP 830), with a candidate datastore for transactional commits |
 | 5. Target | Where configuration ends up | Meraki Dashboard-managed cloud configuration | Device's YANG-modeled running configuration |
 
-You write layer 1. NaC owns 2-4. The value of NaC isn't any single layer -
-it's that you stop writing layers 2, 3, and 4 yourself. You describe intent;
-the module handles module composition, Terraform resource wiring, and
-platform-specific API/YANG path construction.
+You are responsible for layer 1; NaC owns layers 2 through 4. The value of
+NaC isn't found in any single layer - it's that you no longer have to write
+layers 2, 3, and 4 yourself. You describe intent, and the module handles
+module composition, Terraform resource wiring, and platform-specific
+API/YANG path construction.
 
 !!! note "New to YANG?"
     YANG is the data modeling language IOS XE uses to describe its
@@ -176,4 +177,4 @@ By completing this lab, you will gain hands-on experience with:
 
 ---
 
-**Next:** [Topologies](Topologies.md){.next-only}
+**Next:** [Environment Setup](Intro02_environment.md){.next-only}

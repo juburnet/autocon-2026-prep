@@ -23,16 +23,26 @@ We will be authenticating to Meraki using a personal API key tied to your dashbo
 
 1. In the Meraki Dashboard, click your **profile icon** in the top-right corner and select **My profile**.
 
-    ![Meraki Dashboard profile menu](assets/media/image11.png){ width="60%" }
+    ![Meraki Dashboard profile menu](assets/image11.png){ width="60%" }
 
 2. Scroll down to the **API access** section and click **Generate new API key**. 
 
 3. Copy the key immediately and save it somewhere safe, we will be using it in the next step. **It will only be displayed once** - if you navigate away without copying it, you will need to revoke it and generate a new one.
 
-    ![Meraki Dashboard profile menu](assets/media/image12.png){ width="60%" }
+    ![Meraki Dashboard profile menu](assets/image12.png){ width="60%" }
 
     !!! warning "Keep your API key private"
         Your API key has the same access level as your dashboard login. Never share it, commit it to a repository, or paste it into chat. You will store it securely in the next step. We also advise you to revoke this API key after finishing the lab as a precaution.
+
+    !!! note "Your key inherits your admin role"
+        A personal API key doesn't carry its own permissions - it acts with
+        whatever role your account holds in the organization, the same way
+        your dashboard login does. This lab's first steps configure
+        org-level settings (login security, SNMP, VPN firewall rules), so
+        your lab account needs **full organization** admin access, not just
+        network-level access, for Terraform to apply them. See the
+        [Meraki Developer Hub authorization docs](https://developer.cisco.com/meraki/api-v1/authorization/)
+        for how API key permissions map to admin roles.
 
 ---
 

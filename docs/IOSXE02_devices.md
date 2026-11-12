@@ -1,9 +1,9 @@
-# Step 2 - `data/devices/*.nac.yaml`: device identity
+# Step 3 - `data/devices/*.nac.yaml`: device identity
 
 Each of the 4 devices gets its own file (unchanged from the original stubs,
 which only had `name`/`host`). Each now adds:
 
-- `variables.HOSTNAME` - resolves the `${HOSTNAME}` references from step 1
+- `variables.HOSTNAME` - resolves the `${HOSTNAME}` references from step 2
   for that device.
 
 Example (`data/devices/Access1.nac.yaml`):

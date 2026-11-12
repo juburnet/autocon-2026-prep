@@ -14,11 +14,11 @@ The topology is intentionally simple: `Border`, `Core`, `Access1`, and
 `Host2`) attached to `Access1`/`Access2` for end-to-end connectivity testing.
 Every device shares a single management subnet, `198.18.128.0/18`, on VLAN1.
 No interface or uplink wiring is modeled in the YAML - only device identity
-(`name`/`host`/`HOSTNAME`) and, from step 3 onward, shared config applied via
+(`name`/`host`/`HOSTNAME`) and, from step 4 onward, shared config applied via
 device groups and templates. See `ios-xe/README.md` for the full addressing
 table.
 
-## Step 1 - `data/1_global.nac.yaml`: global configuration and variables
+## Step 2 - `data/1_global.nac.yaml`: global configuration and variables
 
 Global configuration applies to **every** registered device unless overridden
 at the device-group or device level - the precedence hierarchy is device >
@@ -27,7 +27,7 @@ device group > global. This file defines two things:
 - A **global variable**, `${SITE}`, set once and inherited by all 4 devices.
 - A login banner and `system.hostname` that both reference `${HOSTNAME}` - a
   variable that doesn't exist yet at this level. It's defined **per device**
-  in step 2, so the same global template resolves to a different literal
+  in step 3, so the same global template resolves to a different literal
   hostname on each device.
 
 ```yaml
@@ -54,4 +54,4 @@ sections (banner text *and* the `hostname` CLI command).
 
 ---
 
-**← Previous:** [Applying Part 1](Meraki06_applying.md) · **Next:** [Devices](IOSXE02_devices.md)
+**← Previous:** [SSH to devices](IOSXE00_ssh.md) · **Next:** [Devices](IOSXE02_devices.md)

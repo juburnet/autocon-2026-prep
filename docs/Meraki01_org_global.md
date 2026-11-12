@@ -1,58 +1,15 @@
 # Step 3 - `data/1_org_global.nac.yaml`: org and global settings
 
-As noted, each lab pod consist of the two networks, hence 2 users will be sharing the same Organization. 
-The Organization is aleady pre-configrued. 
-In the Organization we also pre-configured Datacenter network that each of the BRanches will be VPN' into. 
+Each lab pod shares one Meraki organization between two participants, so two
+branch networks live side by side under the same org. The organization
+itself is already created for you, along with a shared Datacenter network
+that every branch VPNs into - this step doesn't create any of that, it
+configures organization-level settings on top of it.
 
-In this step we will evaluate some basic organizational level settings to help us getting started understanding the basic principles. 
-
- An organization in Cisco Meraki is the highest-level container or root account in the cloud dashboard hierarchy. It represents a single company, institution, department etc. The Networks are configured as part of the Organization it belongs to. 
-
-Open the `/data/org_global.nac.yaml` file and review the configuration. You will find the initial block with enviromental variables:
-
-```
-      organizations:
-        - name: !env org_name
-          managed: false
-          login_security:
-            enforce_password_expiration: false
-            password_expiration_days: 40
-            enforce_different_passwords: true
-            num_different_passwords: 5
-            enforce_strong_passwords: true
-            enforce_account_lockout: true
-            account_lockout_attempts: 5
-            enforce_idle_timeout: true
-            idle_timeout_minutes: 90
-            ```
-
-In particular, notice that the organization name configured uses the org_name variable (identified with `!env'). We need to configure this value and we will do that first in .env file, and later on, in the CICD variables. 
-
-Edit the .env that you previouysly copied from .env.example, and copy your Org-ID (either from email or Meraki dashboard) so it looks like something like `export org_name=Org-123455`. 
-
-You also received from us the Serial Numbers associated with your branch. Populate them in the file as well:
-
-export branch_name=
-export branch_mx_serial=
-export branch_ms_serial=
-export branch_cw_serial=
-
-
-You can pick your own Branch Name - for example "Shawn's Network". 
-
-Review the remaining confguration. This is a simple Organization creation example with a few basic features to demonstrate the ease of creation of an Organization using Automation.
-If you wish, you can modify any of the settings in the login security sections.
-
-Documentation Reference
-
-But how do you know what configuration options are supported, and what the correct YAML structure is?
-
-The data model documentation is published on the Network-as-Code website. Specifically for login settings we can see the documentation at https://netascode.cisco.com/docs/data_models/meraki/organizations/general_management/login_security/. 
-
-
-
-
-The organization level is where settings apply to *everything* below it,
+An organization in Cisco Meraki is the highest-level container in the cloud
+Dashboard hierarchy - it represents a single company, institution, or
+department, and every network you configure belongs to one. The
+organization level is where settings apply to *everything* below it,
 regardless of network or device. This file sets:
 
 - The admin user and a `login_security` policy (password expiration, lockout
@@ -62,6 +19,102 @@ regardless of network or device. This file sets:
 - An org-wide `appliance.vpn_firewall_rules` rule set - shared-services and
   inter-VLAN-isolation rules every spoke inherits through the VPN hub, so you
   write them once instead of per-branch.
+
+## Two ideas worth internalizing now
+
+Two principles underpin everything from here on:
+
+- **Single source of truth.** The YAML under `data/` is the one place that
+  defines what your branch network should look like. Nothing is meant to be
+  configured ad hoc in the Dashboard outside of it - a manual change made
+  there is configuration drift waiting to be overwritten the next time
+  someone runs `terraform apply`.
+- **Declarative, not imperative.** You declare *what* the organization
+  should look like - a login security policy, an SNMPv3 user - not *how* to
+  get there. There's no sequence of clicks or API calls to write or order;
+  the module and provider work that out, and Terraform's own dependency
+  graph decides what happens before what, not file order. That's also why
+  it doesn't matter which file in `data/` you create first: every
+  `.nac.yaml` file there gets deep-merged into one model before anything is
+  validated or applied.
+
+## Open and review the file
+
+Open `data/1_org_global.nac.yaml` and review the configuration. Near the top
+you'll find the organization block with its environment-driven variables:
+
+```yaml
+organizations:
+  - name: !env org_name
+    managed: false
+    login_security:
+      enforce_password_expiration: false
+      password_expiration_days: 40
+      enforce_different_passwords: true
+      num_different_passwords: 5
+      enforce_strong_passwords: true
+      enforce_account_lockout: true
+      account_lockout_attempts: 5
+      enforce_idle_timeout: true
+      idle_timeout_minutes: 90
+```
+
+Notice that the organization's `name` uses the `org_name` variable, resolved
+by the `!env` tag instead of being hardcoded. You'll set that value first in
+your local `.env` file, and later in the GitLab CI/CD variables.
+
+## Set your pod's values in `.env`
+
+Edit the `.env` file you copied from `.env.example` earlier, and set
+`org_name` to your Org ID (from your welcome email or the Meraki Dashboard):
+
+```sh
+export org_name=Org-123455
+```
+
+You were also given the serial numbers for your pod's devices - set those
+too, along with a name of your own choosing for your branch network:
+
+```sh
+export branch_name=
+export branch_mx_serial=
+export branch_ms_serial=
+export branch_cw_serial=
+```
+
+`branch_name` can be anything unique to you - for example `"Shawn's
+Network"` - just make sure it doesn't collide with your pod partner's.
+
+!!! note "`!env` vs `${...}` - two different variable mechanisms"
+    `!env VAR` (used throughout this file) pulls a value from your shell
+    environment - `.env` locally, CI/CD variables in the pipeline - and is
+    the mechanism for anything secret or pod-specific: API keys, org name,
+    device serials, RADIUS secrets. `${VAR}` is a different mechanism you
+    may see referenced in the schema docs: a template-scoped variable
+    substituted at render time, used to make one template produce different
+    output per site (non-sensitive values only). This lab's template step
+    (step 7) sticks to static values for simplicity, but `${...}` is what
+    you'd reach for if the same template needed to render differently for
+    every branch.
+
+Review the rest of the file: it's a deliberately small example that
+demonstrates automating organization creation with just a few settings. Feel
+free to adjust any of the `login_security` values to see how a change flows
+through validation and `terraform plan`.
+
+## Finding the documentation
+
+How do you know what configuration options are supported, and what YAML
+structure they expect? The full data model is published on the Network as
+Code docs site - for example, the schema for `login_security` is documented
+at
+[netascode.cisco.com/docs/data_models/meraki/organizations/general_management/login_security](https://netascode.cisco.com/docs/data_models/meraki/organizations/general_management/login_security/).
+
+<figure markdown="span">
+  ![Network as Code docs - Organization Login Security Configuration](assets/docs.png)<figcaption>The
+  `netascode.cisco.com` schema reference for `organizations.login_security` -
+  the field you're about to break on purpose below.</figcaption>
+</figure>
 
 **Key idea:** `!env org_name` and similar tags are how secrets and
 environment-specific values stay out of version control while the YAML
@@ -84,7 +137,9 @@ of mistakes, both running before anything touches the Dashboard:
   that every value matches the schema's expected type, format, and range -
   wrong types, out-of-range numbers, missing required fields. It has no
   opinion on whether a value makes business sense, only whether it's a legal
-  value for that field. This is what the `validate` stage of this repo's
+  value for that field. Under the hood this runs on **Yamale**, a YAML
+  schema validator - `meraki/.schema.yaml` is the blueprint it checks every
+  file in `data/` against. This is what the `validate` stage of this repo's
   GitLab pipeline (`.gitlab-ci.yml`) runs on every push.
 - **Semantic (business-rule) validation** goes further: custom logic runs
   against the parsed configuration to enforce policies a schema can't

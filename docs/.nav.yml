@@ -1,9 +1,8 @@
 nav:
   - Home: index.md
   - Overview: Intro01_overview.md
-  - Topologies: Topologies.md
   - Environment Setup: Intro02_environment.md
-  - "Part 1 — Meraki":
+  - "Network as Code for Meraki":
       - "[1] Log in & find org": Meraki00_login.md
       - "[2] Org & global": Meraki01_org_global.md
       - "[3] Networks & appliance": Meraki02_networks.md
@@ -11,12 +10,15 @@ nav:
       - "[5] Wireless": Meraki04_wireless.md
       - "[6] Templates": Meraki05_templates.md
       - "Applying Part 1": Meraki06_applying.md
-  - "Part 2 — IOS-XE":
-      - "[1] Global config": IOSXE01_global.md
-      - "[2] Devices": IOSXE02_devices.md
-      - "[3] Device groups": IOSXE03_device_groups.md
-      - "[4] Templates": IOSXE04_templates.md
+      - "CI/CD Pipeline": Meraki07_cicd.md
+  - "Network as Code for IOS-XE":
+      - "[1] SSH to devices": IOSXE00_ssh.md
+      - "[2] Global config": IOSXE01_global.md
+      - "[3] Devices": IOSXE02_devices.md
+      - "[4] Device groups": IOSXE03_device_groups.md
+      - "[5] Templates": IOSXE04_templates.md
       - "Applying Part 2": IOSXE05_applying.md
+  - Topologies: Topologies.md
   - Glossary: Glossary.md
   - Cheat Sheet: CheatSheet.md
   - References: References.md

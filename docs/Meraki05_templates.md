@@ -19,6 +19,19 @@ propagates everywhere it's referenced, which is what keeps a fleet of
 branches consistent as policy evolves - this lab's single network per pod is
 enough to show the mechanic, even though the payoff compounds with scale.
 
+!!! note "Not the same as Meraki's own dashboard templates"
+    The Dashboard has its own native "configuration templates" feature -
+    binding many networks to one cloned config - which is a different
+    mechanism entirely. What this step calls a template is a Network as Code
+    concept: a named, reusable block of YAML merged into a network via a
+    `templates:` reference. NaC itself has two flavors: `type: model` (what
+    this lab uses - a reusable block of configuration) and `type: file`
+    (generates a whole config file rather than a block) - this lab only
+    exercises the first. Templates can also be parameterized with
+    `${variable}` placeholders so the same template renders differently per
+    site (see the `!env` vs `${...}` note back in step 3); this lab's
+    library sticks to static named blocks for simplicity.
+
 The capstone, and the first point where you stop writing full configuration
 per-network and instead write it once, apply it by reference. Deliberately
 two files sharing a prefix because they are a matched pair:
@@ -47,6 +60,14 @@ Change a rule in the template once, and it propagates to every network that
 references it - the same reusability/consistency/maintainability trade-off
 you'll see again in IOS-XE Part 2, step 4.
 
+By the time this merge happens, the two files stop being separate concerns -
+`terraform apply` writes one fully-resolved result to
+`meraki_merged_configuration.nac.yaml`, the same merged-model file every
+earlier step's `nac-validate`/`nac-test` runs have been reading. Open it
+after this step and the four templates won't appear as their own section at
+all; their `appliance.firewall.*` content is already inlined under the
+branch network, indistinguishable from configuration you'd written directly.
+
 !!! warning "The name must match exactly"
     A `name` that doesn't match is not an error - it's a silent miss. The
     merge key is matched literally, so a typo'd or hardcoded network name
@@ -55,6 +76,9 @@ you'll see again in IOS-XE Part 2, step 4.
     meant to configure. Every data file that targets the branch network
     (`2_networks`, `3_switching`, `4_wireless`, `5_appliance_variables`)
     must use `!env branch_name` so they all resolve to the same value.
+
+**Key takeaway:** templates exist to enforce consistency at scale - one
+source of truth for a policy, referenced (not copied) everywhere it applies.
 
 ---
 

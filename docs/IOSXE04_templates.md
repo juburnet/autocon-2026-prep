@@ -1,7 +1,7 @@
-# Step 4 - `data/4_templates.nac.yaml` + `data/4_templates_assignment.nac.yaml`: `model` templates
+# Step 5 - `data/4_templates.nac.yaml` + `data/4_templates_assignment.nac.yaml`: `model` templates
 
 The capstone, mirroring Meraki's step 5. Templates answer *what
-configuration* to apply; device groups (step 3) answer *which devices*. Used
+configuration* to apply; device groups (step 4) answer *which devices*. Used
 together, you get "this exact VLAN set, on exactly these devices" without
 duplicating the VLAN definitions per device. Deliberately split into two
 files sharing the `4_` prefix - a template with nothing referencing it does
@@ -31,7 +31,7 @@ iosxe:
 ```
 
 `4_templates_assignment.nac.yaml` - the reference, merging into the
-`ACCESS_SWITCHES` group from step 3 by matching `name: ACCESS_SWITCHES`:
+`ACCESS_SWITCHES` group from step 4 by matching `name: ACCESS_SWITCHES`:
 
 ```yaml
 ---

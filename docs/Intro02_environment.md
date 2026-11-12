@@ -4,6 +4,30 @@ Before diving into either track, get familiar with the two tools you'll use
 to write and apply your YAML throughout the lab: VS Code as your editor, and
 WSL as the Linux shell that runs Terraform.
 
+## Accessing your lab machine
+
+This lab runs on a shared Windows jump machine with VS Code, WSL, and
+Terraform already installed - connect to it over RDP (Remote Desktop
+Protocol):
+
+1. On Windows, open **Remote Desktop Connection** (search for `mstsc` in the
+   Start menu, or press ++win+r++ and type `mstsc`).
+2. Enter the jump machine address from the Cheat Sheet's **Lab access**
+   table and click **Connect**.
+3. Sign in with the username/password from the same table.
+
+!!! tip "Working from your own computer instead"
+    If you'd rather use your own laptop instead of RDP-ing into the jump
+    machine, that's fine - use whatever editor and terminal you're
+    comfortable with. Just make sure you have, before the lab starts:
+
+    - **Terraform** installed
+    - **[uv](https://docs.astral.sh/uv/)** installed - this lab's Python
+      tooling (`nac-validate`, `nac-test`) is installed and run through it
+    - An active connection to the **lab VPN** - the GitLab instance and the
+      virtualized IOS-XE devices (CML) only live inside the lab network, not
+      on the public internet
+
 ## What is VS Code?
 
 Visual Studio Code (VS Code) is a free, lightweight, yet powerful source
@@ -33,7 +57,7 @@ which helps catch syntax errors and enforce best practices as you write your
 configuration files.
 
 <figure markdown="span">
-  ![Red Hat YAML extension in VS Code](assets/rh.png)<figcaption>The Red Hat
+  ![Red Hat YAML extension in VS Code](assets/rh.png){ width="70%" }<figcaption>The Red Hat
   YAML extension, pre-installed in your lab environment.</figcaption>
 </figure>
 
@@ -190,4 +214,4 @@ terraform plan
 
 ---
 
-**← Previous:** [Topologies](Topologies.md) · **Next:** [Part 1 - Meraki: log in](Meraki00_login.md)
+**← Previous:** [Overview](Intro01_overview.md) · **Next:** [Part 1 - Meraki: log in](Meraki00_login.md)

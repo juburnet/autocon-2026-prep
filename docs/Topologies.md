@@ -1,5 +1,10 @@
 # Topologies
 
+TODO. Make pictures same style and size. 
+Add the Info about IP/HOSTNAMES/env variables used etc..
+
+
+
 Visual reference for both halves of the lab - how the Meraki branch networks
 are organized, and how the IOS-XE devices are wired.
 
@@ -22,4 +27,4 @@ are organized, and how the IOS-XE devices are wired.
 
 ---
 
-**← Previous:** [Overview](Intro01_overview.md) · **Next:** [Environment Setup](Intro02_environment.md)
+**← Back to:** [Overview](Intro01_overview.md)
