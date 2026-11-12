@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 656" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+  <!-- White-background companion to meraki_lab_diagram_v2.png, same visual
+       language (black line-art boxes, green accent dot, bold black labels,
+       blue dashed/italic caption) applied to the IOS-XE device topology. -->
+  <title id="t">Part 2 - IOS-XE lab topology</title>
+  <desc id="d">Border connects to Core; Core connects to the two access switches Access1 and Access2; each access switch hosts one unmanaged Alpine Linux end host, Host1 and Host2. All on one shared 198.18.128.0/18 subnet.</desc>
+  <rect width="1000" height="656" fill="#ffffff"/>
+
+  <!-- connectors: Border -> Core -> (Access1, Access2) -> (Host1, Host2) -->
+  <g stroke="#333333" stroke-width="2" fill="none">
+    <line x1="500" y1="130" x2="500" y2="200"/>
+    <path d="M500,290 L500,320 L230,320 L230,380"/>
+    <path d="M500,320 L770,320 L770,380"/>
+    <line x1="230" y1="470" x2="230" y2="520"/>
+    <line x1="770" y1="470" x2="770" y2="520"/>
+  </g>
+
+  <!-- Border -->
+  <g>
+    <rect x="400" y="40" width="200" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+    <rect x="465" y="58" width="22" height="22" rx="4" fill="none" stroke="#333333" stroke-width="2"/>
+    <path d="M469,69 h14 M476,62 v14" stroke="#333333" stroke-width="2"/>
+    <circle cx="492" cy="60" r="3.5" fill="#6dbf3c"/>
+    <text x="500" y="100" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Border</text>
+    <text x="500" y="118" text-anchor="middle" font-size="12" fill="#666666">Edge / external-facing</text>
+  </g>
+
+  <!-- Core -->
+  <g>
+    <rect x="400" y="200" width="200" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+    <rect x="465" y="218" width="22" height="22" rx="4" fill="none" stroke="#333333" stroke-width="2"/>
+    <path d="M469,229 h14 M476,222 v14" stroke="#333333" stroke-width="2"/>
+    <circle cx="492" cy="220" r="3.5" fill="#6dbf3c"/>
+    <text x="500" y="260" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Core</text>
+    <text x="500" y="278" text-anchor="middle" font-size="12" fill="#666666">L3 core</text>
+  </g>
+
+  <!-- Access1 -->
+  <g>
+    <rect x="120" y="380" width="220" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+    <rect x="195" y="398" width="22" height="22" rx="4" fill="none" stroke="#333333" stroke-width="2"/>
+    <path d="M199,409 h14 M206,402 v14" stroke="#333333" stroke-width="2"/>
+    <circle cx="222" cy="400" r="3.5" fill="#6dbf3c"/>
+    <text x="230" y="440" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Access1</text>
+    <text x="230" y="458" text-anchor="middle" font-size="12" fill="#666666">Access switch</text>
+  </g>
+
+  <!-- Access2 -->
+  <g>
+    <rect x="660" y="380" width="220" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+    <rect x="735" y="398" width="22" height="22" rx="4" fill="none" stroke="#333333" stroke-width="2"/>
+    <path d="M739,409 h14 M746,402 v14" stroke="#333333" stroke-width="2"/>
+    <circle cx="762" cy="400" r="3.5" fill="#6dbf3c"/>
+    <text x="770" y="440" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Access2</text>
+    <text x="770" y="458" text-anchor="middle" font-size="12" fill="#666666">Access switch</text>
+  </g>
+
+  <!-- Host1 (unmanaged - dashed border) -->
+  <g>
+    <rect x="120" y="520" width="220" height="70" rx="10" fill="#ffffff" stroke="#9aa3ab" stroke-width="2" stroke-dasharray="6 4"/>
+    <rect x="197" y="535" width="18" height="13" rx="2" fill="none" stroke="#666666" stroke-width="2"/>
+    <line x1="206" y1="548" x2="206" y2="553" stroke="#666666" stroke-width="2"/>
+    <line x1="198" y1="553" x2="214" y2="553" stroke="#666666" stroke-width="2"/>
+    <text x="230" y="572" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a1a">Host1 (Alpine)</text>
+  </g>
+
+  <!-- Host2 (unmanaged - dashed border) -->
+  <g>
+    <rect x="660" y="520" width="220" height="70" rx="10" fill="#ffffff" stroke="#9aa3ab" stroke-width="2" stroke-dasharray="6 4"/>
+    <rect x="737" y="535" width="18" height="13" rx="2" fill="none" stroke="#666666" stroke-width="2"/>
+    <line x1="746" y1="548" x2="746" y2="553" stroke="#666666" stroke-width="2"/>
+    <line x1="738" y1="553" x2="754" y2="553" stroke="#666666" stroke-width="2"/>
+    <text x="770" y="572" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a1a">Host2 (Alpine)</text>
+  </g>
+
+  <text x="500" y="630" text-anchor="middle" font-size="14" font-style="italic" fill="#0a60ff">Border, Core, Access1, Access2 are Terraform-managed; Host1/Host2 (dashed) are unmanaged end hosts - all on 198.18.128.0/18</text>
+</svg>

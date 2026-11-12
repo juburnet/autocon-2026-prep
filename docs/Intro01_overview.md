@@ -101,8 +101,21 @@ Dashboard account, you should have received a notification that new Cisco
 Meraki administrator privileges have been granted to your account. Follow
 the instructions in the email to accept the invite.
 
+
+<figure markdown="span">
+  ![Meraki Dashboard - create password](assets/image2.png)<figcaption>Creating
+  your Dashboard password on first login.</figcaption>
+</figure>
+
+
 If this is your first time accessing Meraki Dashboard with this email, the
 message will guide you to create a password.
+
+<figure markdown="span">
+  ![Meraki Dashboard - organization selector](assets/image3.png)<figcaption>Selecting
+  your shared lab organization from the top-left org switcher.</figcaption>
+</figure>
+
 
 !!! danger "Shared organization"
     One Meraki organization is shared by **two participants**. Each of you
@@ -163,4 +176,4 @@ By completing this lab, you will gain hands-on experience with:
 
 ---
 
-**Next:** [Part 1 - Meraki: log in](Meraki00_login.md){.next-only}
+**Next:** [Topologies](Topologies.md){.next-only}

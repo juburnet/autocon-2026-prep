@@ -49,6 +49,12 @@ to the one resource that writes the merged model file to disk - it does
 **not** contact the Dashboard or change any configuration, exactly like the
 CI `validate` stage:
 
+<figure markdown="span">
+  ![Network as Code docs - Organization Login Security Configuration](assets/docs.png)<figcaption>The
+  `netascode.cisco.com` schema reference for `organizations.login_security` -
+  the field you're about to break on purpose in `1_org_global.nac.yaml`.</figcaption>
+</figure>
+
 ```sh
 cd meraki
 terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
