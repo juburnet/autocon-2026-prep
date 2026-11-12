@@ -90,8 +90,9 @@ dependency graph from the merged model.
 ## Lab access - BYOA model
 
 This lab uses virtualized IOS XE devices in Cisco Modeling Labs (CML), a
-GitLab instance running in the lab environment, and your own Meraki
-Dashboard organization under the Bring Your Own Account (BYOA) model. You
+GitLab instance running in the lab environment, and a Meraki Dashboard
+organization (shared with one other participant, see below) that you access
+with your own account under the Bring Your Own Account (BYOA) model. You
 will use your own Meraki Dashboard account and your own API key throughout
 both labs - Cisco does not store or manage your credentials.
 

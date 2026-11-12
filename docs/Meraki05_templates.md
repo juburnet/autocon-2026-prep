@@ -47,6 +47,15 @@ Change a rule in the template once, and it propagates to every network that
 references it - the same reusability/consistency/maintainability trade-off
 you'll see again in IOS-XE Part 2, step 4.
 
+!!! warning "The name must match exactly"
+    A `name` that doesn't match is not an error - it's a silent miss. The
+    merge key is matched literally, so a typo'd or hardcoded network name
+    simply never pairs up with the network from step 3, and you end up with
+    a stray second entry carrying the templates instead of the branch you
+    meant to configure. Every data file that targets the branch network
+    (`2_networks`, `3_switching`, `4_wireless`, `5_appliance_variables`)
+    must use `!env branch_name` so they all resolve to the same value.
+
 ---
 
 **← Previous:** [Wireless](Meraki04_wireless.md) · **Next:** [Applying Part 1](Meraki06_applying.md)
