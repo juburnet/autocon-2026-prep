@@ -36,10 +36,10 @@
     <text x="819" y="135" font-weight="700" fill="#fff">Transport</text>
     <text x="819" y="158" fill="#cfe3f7">HTTPS / REST to the</text>
     <text x="819" y="180" fill="#cfe3f7">Meraki Dashboard API</text>
-    <rect x="952" y="105" width="208" height="96" rx="10" fill="#FF007F"/>
+    <rect x="952" y="105" width="208" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
     <text x="1056" y="135" font-weight="700" fill="#fff">Your branch network</text>
-    <text x="1056" y="158" fill="#ffe6f2">MX appliance, MS switch,</text>
-    <text x="1056" y="180" fill="#ffe6f2">CW access point</text>
+    <text x="1056" y="158" fill="#cfe3f7">MX appliance, MS switch,</text>
+    <text x="1056" y="180" fill="#cfe3f7">CW access point</text>
   </g>
   <g stroke="#02C8FF" stroke-width="2.5" marker-end="url(#a)">
     <line x1="230" y1="153" x2="266" y2="153"/><line x1="458" y1="153" x2="494" y2="153"/>
