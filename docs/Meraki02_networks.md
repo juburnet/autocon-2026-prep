@@ -29,13 +29,13 @@ step 5's SSIDs reference by ID.
 You don't have to wait until every step is deployed to check your work. Once
 the network exists, `tests/templates/config/networks_list.robot` already has
 something to verify: the network's `name`, `product_types`, `time_zone`, and
-`tags` against the live Dashboard. Right after this step's `terraform apply`
-has finished, regenerate the merged model file and run the tests:
+`tags` against the live Dashboard. Deploy this step, then run the tests - the
+same `terraform apply` also refreshes `meraki_merged_configuration.nac.yaml`
+on disk, which is the file `nac-test` reads:
 
 ```sh
 cd meraki
-terraform apply
-terraform apply -target=module.meraki.module.model -auto-approve   # only rewrites meraki_merged_configuration.nac.yaml locally
+terraform apply -auto-approve
 nac-test -d ./meraki_merged_configuration.nac.yaml -t ./tests/templates -o ./tests/results
 ```
 
