@@ -7,7 +7,7 @@ both parts of the workshop.
 
 | System | Address | Username | Password |
 |---|---|---|---|
-| Meraki Dashboard | [account.meraki.com/login](https://account.meraki.com/login) | *(provided separately)* | *(provided separately)* |
+| Meraki Dashboard | [dashboard.meraki.com](https://dashboard.meraki.com) | *(provided separately)* | *(provided separately)* |
 | GitLab | `TODO-gitlab-url` | dcloud | C1sco12345 |
 | Windows Jump Machine | `TODO-jump-host-url` | - | C1sco12345 |
 
@@ -69,9 +69,11 @@ pipeline (`.gitlab-ci.yml`) doesn't read `.env` - it needs its own copy of
 your pod-specific values, set as **GitLab CI/CD Variables** instead
 (Project → Settings → CI/CD → Variables → **Add variable**).
 
-When you add `MERAKI_API_KEY` (masked + protected), also add the five pod-specific variables below. They are kept out of
-`.gitlab-ci.yml` so nobody has to edit the pipeline file (and so pod hardware
-serials don't end up committed to Git history):
+When you add `MERAKI_API_KEY` (masked + protected), add the five variables
+listed alongside it below - one shared with your partner (`org_name`) and
+four specific to your pod. They are kept out of `.gitlab-ci.yml` so nobody
+has to edit the pipeline file (and so pod hardware serials don't end up
+committed to Git history):
 
 | Variable | Value |
 |---|---|
@@ -94,8 +96,8 @@ already defined inline in `.gitlab-ci.yml` and needs no changes.
   stable.
 - **Merge by `name`** - the `nac-*` Terraform modules read every YAML file
   under `data/`, deep-merging them into one model by matching `name` at each
-  nesting level. Two files both containing `name: !env branch_name` merge into a single object instead of producing
-  two.
+  nesting level. Two files both containing `name: !env branch_name` merge
+  into a single object instead of producing two.
 - **File naming is reading order, not deployment order** - numeric prefixes
   (`1_`, `2_`, `3_`...) are a suggested teaching path; Terraform builds its
   own dependency graph from the merged model regardless of file name.
