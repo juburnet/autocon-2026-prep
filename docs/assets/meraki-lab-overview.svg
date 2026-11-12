@@ -95,8 +95,8 @@
       <text x="798" y="410" fill="#9fb4cc" font-size="12">4_wireless.nac.yaml</text>
     </g>
     <g>
-      <rect x="970" y="268" width="190" height="170" rx="10" fill="#0f2742" stroke="#FF007F"/>
-      <circle cx="998" cy="296" r="15" fill="#FF007F"/><text x="998" y="301" text-anchor="middle" font-weight="700" fill="#fff">6</text>
+      <rect x="970" y="268" width="190" height="170" rx="10" fill="#0f2742" stroke="#2a4a6e"/>
+      <circle cx="998" cy="296" r="15" fill="#02C8FF"/><text x="998" y="301" text-anchor="middle" font-weight="700" fill="#07182D">6</text>
       <text x="1022" y="301" font-weight="700" fill="#fff">Templates</text>
       <text x="984" y="332" fill="#cfe3f7">Define firewall rules once,</text>
       <text x="984" y="352" fill="#cfe3f7">apply by reference to the</text>
