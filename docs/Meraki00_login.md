@@ -1,6 +1,11 @@
 # Part 1 - Meraki
 
-![Overview of Part 1 - Meraki: YAML flows through the Network as Code module, Terraform provider and Dashboard API to your branch network; build it in six steps with a validate, plan, apply, test loop](assets/meraki-lab-overview.svg)
+<figure markdown="span">
+  ![Part 1 - Meraki lab overview](assets/meraki-lab-overview.svg)<figcaption>How the
+  six steps fit together: your YAML becomes a branch network via the Network as
+  Code module, the Meraki provider and the Dashboard API. Click the diagram to
+  open it full size.</figcaption>
+</figure>
 
 ## Step 1 - Log In and Identify Your Lab Organization
 

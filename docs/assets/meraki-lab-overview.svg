@@ -1,10 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+  <!-- This file is referenced from Markdown via <img src>, so the page's CSS
+       and webfonts do not reach it and the accessibility markup below is not
+       exposed to screen readers - the img alt attribute is the accessible
+       name. title/desc/role are kept as documentation for anyone editing this
+       file, and would become live if the SVG were ever inlined.
+       Roboto leads the font stack to match the Material theme where it is
+       installed locally; Helvetica/Arial are the practical fallbacks.
+       The backdrop rect below uses rx="8" to match the border-radius that
+       docs/stylesheets/extra.css applies to content images - a larger radius
+       leaves the page background visible in the corners. -->
   <title id="t">Part 1 - Meraki lab overview</title>
   <desc id="d">Six steps build a single-branch Meraki network from YAML files, which the Network as Code Terraform module and the Meraki provider push to the Dashboard, then validate and test.</desc>
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#02C8FF"/></marker>
   </defs>
-  <rect width="1200" height="700" rx="14" fill="#07182D"/>
+  <rect width="1200" height="700" rx="8" fill="#07182D"/>
   <text x="600" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">Part 1 - Meraki: lab overview</text>
   <text x="600" y="76" text-anchor="middle" font-size="16" fill="#9fb4cc">You write YAML. Network as Code turns it into a Meraki branch network.</text>
 
