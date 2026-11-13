@@ -15,7 +15,7 @@ and verify their configuration.
 ## This lab uses NETCONF
 
 IOS XE as Code uses **NETCONF over SSH (TCP 830)** to push configuration to
-the devices, and `nac-test` uses it to verify them. See the
+the devices. See the
 [Cheat Sheet](CheatSheet.md) for the shared device credentials used
 throughout this section.
 
@@ -27,6 +27,14 @@ throughout this section.
     has no equivalent: it writes straight to running, one HTTP call per
     resource, so a failure part-way through can leave a device partly
     configured. See the [Glossary](Glossary.md) for datastore terms.
+
+!!! note "`nac-test` still uses RESTCONF"
+    Terraform is NETCONF-only here, but the Robot Framework suite under
+    `ios-xe/tests/templates/` predates that move and still queries each
+    device over RESTCONF (HTTPS, port 443). Both transports therefore need
+    to be enabled on the lab devices. The current `nac-iosxe` test
+    templates are NETCONF-based; aligning this repo with them is tracked
+    separately.
 
 ## Open Solar-PuTTY
 
@@ -120,13 +128,24 @@ Look for these specific configuration lines in the `show run` output:
 username nac_admin privilege 15 secret cisco
 ...
 netconf-yang
+netconf-yang feature candidate-datastore
+...
+ip http secure-server
+restconf
 ```
 
 What these commands do:
 
 - **`netconf-yang`** - enables the NETCONF-over-SSH server on TCP/830. This
-  is the channel Terraform uses to push YANG-modelled configuration and
-  `nac-test` uses to verify the result.
+  is the channel Terraform uses to push YANG-modelled configuration.
+- **`netconf-yang feature candidate-datastore`** - enables the candidate
+  datastore. `ios-xe/main.tf` sets `device_transaction = true`, and the
+  [data model](https://netascode.cisco.com/docs/data_models/iosxe/entity/device/)
+  lists the candidate datastore as a prerequisite for it, so without this
+  the first `terraform apply` fails.
+- **`ip http secure-server`** and **`restconf`** - enable the RESTCONF API
+  on HTTPS/443, which the current `nac-test` Robot templates use to read
+  configuration back off the device. Terraform does not use these.
 - **`username nac_admin privilege 15 secret cisco`** - creates the
   administrative user Terraform uses for authentication (shown encrypted in
   `show run` for security).
@@ -147,26 +166,46 @@ What these commands do:
 
 ```text
 configure terminal
- username nac_admin privilege 15 secret cisco
- netconf-yang
- netconf-yang feature candidate-datastore
+username nac_admin privilege 15 secret cisco
+netconf-yang
+netconf-yang feature candidate-datastore
 end
 write memory
 ```
 
 `netconf-yang feature candidate-datastore` turns on the candidate / commit /
-discard-changes flow that makes applies all-or-nothing. Without it, NETCONF
-on IOS XE writes directly to the running configuration.
+discard-changes flow that makes applies all-or-nothing. It is a
+[documented prerequisite](https://netascode.cisco.com/docs/data_models/iosxe/entity/device/)
+for the `device_transaction = true` setting in `ios-xe/main.tf`. Without it,
+the provider edits the running configuration directly, one resource at a
+time.
 
 !!! warning "NETCONF takes a minute to come up"
     If you try this on your own devices after the event, allow about 60
     seconds after enabling `netconf-yang` before pointing Terraform at the
-    device. You can confirm the NETCONF subsystem is answering from a client
-    machine - a successful connection prints the device's `<hello>` message:
+    device.
+
+    From the device itself, confirm the NETCONF process is up and the
+    candidate datastore is present:
+
+    ```text
+    show platform software yang-management process
+    show netconf-yang datastores
+    ```
+
+    `ncsshd` should be `Running`, and the datastore list should include
+    `candidate`.
+
+    From the jump host you can also open the NETCONF subsystem directly - a
+    successful connection prints the device's `<hello>` message:
 
     ```sh
     ssh -s -p 830 <USERNAME>@<IP_ADDRESS> netconf
     ```
+
+    Run that from the WSL/Ubuntu terminal, not from Solar-PuTTY: the `-s`
+    subsystem flag needs an OpenSSH client, which the PuTTY family doesn't
+    provide.
 
 ---
 
