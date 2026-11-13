@@ -17,8 +17,11 @@ The guide walks through both halves of the lab, in order:
   organization, then five steps authoring a single-branch Meraki network
   (one per shared pod, appliance/switch/wireless) directly in YAML, ending
   on a templating/indirection capstone.
-- **Part 2 - IOS-XE**, a small IOS-XE lab, ending on the same
-  templating/indirection pattern so the two halves reinforce each other.
+- **Part 2 - IOS-XE**, a small four-device lab (`Border`, `Core`, `Access1`,
+  `Access2`) where you register each device's identity, then layer on shared
+  configuration through device groups and global settings, finishing with
+  the same templating/indirection pattern from Part 1 so the two halves
+  reinforce each other.
 
 The two parts are deliberately paired: Meraki is a controller-managed
 platform (you configure a cloud Dashboard, which then pushes to devices),
@@ -50,8 +53,8 @@ covers - **Meraki** and **IOS XE**.
 - **Meraki as Code** uses the `netascode/terraform-meraki-nac-meraki` module
   and the `CiscoDevNet/meraki` provider to push configuration to the Meraki
   Dashboard's cloud-hosted REST API.
-- **IOS XE as Code** uses the `netascode/nac-iosxe/iosxe` module and the
-  `CiscoDevNet/iosxe` provider to push YANG-modeled configuration to
+- **IOS XE as Code** uses the `netascode/terraform-iosxe-nac-iosxe` module and
+  the `CiscoDevNet/iosxe` provider to push YANG-modeled configuration to
   on-box devices (Catalyst 9000, C8000V, ISR, ASR, etc.) over NETCONF.
 
 The same workflow applies to every Network as Code platform; only the data
@@ -87,48 +90,6 @@ nesting level), and applies the result. File names and numeric prefixes are
 a **reading order**, not a deployment order - Terraform builds its own
 dependency graph from the merged model.
 
-## Lab access - BYOA model
-
-This lab uses virtualized IOS XE devices in Cisco Modeling Labs (CML), a
-GitLab instance running in the lab environment, and a Meraki Dashboard
-organization (shared with one other participant, see below) that you access
-with your own account under the Bring Your Own Account (BYOA) model. You
-will use your own Meraki Dashboard account and your own API key throughout
-both labs - Cisco does not store or manage your credentials.
-
-If the email you used for the lab reservation is associated with an existing
-Dashboard account, you should have received a notification that new Cisco
-Meraki administrator privileges have been granted to your account. Follow
-the instructions in the email to accept the invite.
-
-
-<figure markdown="span">
-  ![Meraki Dashboard - create password](assets/image2.png){ width="70%" }<figcaption>Creating
-  your Dashboard password on first login.</figcaption>
-</figure>
-
-
-If this is your first time accessing Meraki Dashboard with this email, the
-message will guide you to create a password.
-
-<figure markdown="span">
-  ![Meraki Dashboard - organization selector](assets/image3.png){ width="70%" }<figcaption>Selecting
-  your shared lab organization from the top-left org switcher.</figcaption>
-</figure>
-
-
-!!! danger "Shared organization"
-    One Meraki organization is shared by **two participants**. Each of you
-    will configure **exactly one** network within that shared org - make
-    sure your network name (`branch_name`) is unique so it doesn't collide
-    with your pod partner's.
-
-This lab is designed for learning; the configurations shown are not intended
-for production use as-is. Production deployments require additional
-considerations around state storage, secret management, access control, and
-approval workflows - most of which we note in context but do not implement
-here.
-
 ## What the stack looks like
 
 Network as Code isn't a single tool, it's a layered stack. You write intent
@@ -143,7 +104,7 @@ differ by platform:
 | Layer | What it is | Meraki track | IOS XE track |
 |---|---|---|---|
 | 1. Intent (what you write) | `*.nac.yaml` - declarative YAML, human-readable, under version control | same | same |
-| 2. NaC Terraform module | Merges every YAML in `data/`, resolves variables/templates, renders the data model | `netascode/terraform-meraki-nac-meraki` | `netascode/nac-iosxe/iosxe` |
+| 2. NaC Terraform module | Merges every YAML in `data/`, resolves variables/templates, renders the data model | `netascode/terraform-meraki-nac-meraki` | `netascode/terraform-iosxe-nac-iosxe` |
 | 3. Terraform provider | Turns the merged model into resource-level API calls; knows how to diff and converge | `CiscoDevNet/meraki` | `CiscoDevNet/iosxe` |
 | 4. Transport | How the provider talks to the platform | HTTPS / REST to the Meraki Dashboard API | NETCONF over SSH (TCP 830), with a candidate datastore for transactional commits |
 | 5. Target | Where configuration ends up | Meraki Dashboard-managed cloud configuration | Device's YANG-modeled running configuration |

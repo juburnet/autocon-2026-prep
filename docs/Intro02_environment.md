@@ -25,6 +25,48 @@ Terraform already installed - connect to it through WebRDP.
       virtualized IOS-XE devices (CML) only live inside the lab network, not
       on the public internet
 
+## Lab access - BYOA model
+
+This lab uses virtualized IOS XE devices in Cisco Modeling Labs (CML), a
+GitLab instance running in the lab environment, and a Meraki Dashboard
+organization (shared with one other participant, see below) that you access
+with your own account under the Bring Your Own Account (BYOA) model. You
+will use your own Meraki Dashboard account and your own API key throughout
+both labs - Cisco does not store or manage your credentials.
+
+If the email you used for the lab reservation is associated with an existing
+Dashboard account, you should have received a notification that new Cisco
+Meraki administrator privileges have been granted to your account. Follow
+the instructions in the email to accept the invite.
+
+
+<figure markdown="span">
+  ![Meraki Dashboard - create password](assets/image2.png){ width="70%" }<figcaption>Creating
+  your Dashboard password on first login.</figcaption>
+</figure>
+
+
+If this is your first time accessing Meraki Dashboard with this email, the
+message will guide you to create a password.
+
+<figure markdown="span">
+  ![Meraki Dashboard - organization selector](assets/image3.png){ width="70%" }<figcaption>Selecting
+  your shared lab organization from the top-left org switcher.</figcaption>
+</figure>
+
+
+!!! danger "Shared organization"
+    One Meraki organization is shared by **two participants**. Each of you
+    will configure **exactly one** network within that shared org - make
+    sure your network name (`branch_name`) is unique so it doesn't collide
+    with your pod partner's.
+
+This lab is designed for learning; the configurations shown are not intended
+for production use as-is. Production deployments require additional
+considerations around state storage, secret management, access control, and
+approval workflows - most of which we note in context but do not implement
+here.
+
 ## What is VS Code?
 
 Visual Studio Code (VS Code) is a free, lightweight, yet powerful source
@@ -128,8 +170,7 @@ on your lab machine - just confirm it before you start editing:
 ### Project structure
 
 Before touching Terraform or `.env`, take a quick look at what's actually
-inside `/Desktop/network-as-code` - knowing where things live now saves
-confusion later:
+inside `/Desktop/network-as-code`:
 
 ```text
 network-as-code/
@@ -148,12 +189,13 @@ network-as-code/
     └── tests/
 ```
 
-Both tracks follow the same shape: a `main.tf` driving an nac module, the
-`data/` folder that module actually reads, a `data-lab-task/` folder of files
-you move into `data/` one at a time as the lab progresses, `rules/` for
-validation, and `tests/` for post-deploy checks. You'll only ever work inside
-one track's folder at a time - commands like `terraform plan` always run
-from inside `meraki/` or `ios-xe/`, never from the repo root.
+Both tracks share the same structure: a `main.tf` that drives the NaC module,
+a `data/` folder that the module reads, a `data-lab-task/` folder containing
+files you progressively move into `data/` as the lab advances, a `rules/`
+folder for validation, and a `tests/` folder for post-deployment checks. You
+will work within a single track's folder at a time; commands such as
+`terraform plan` must always be run from within `meraki/` or `ios-xe/`,
+never from the repository root.
 
 ### Terraform: the `main.tf` file
 
