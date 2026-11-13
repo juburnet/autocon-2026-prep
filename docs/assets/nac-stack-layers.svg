@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 180" width="1200" height="180" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+  <!-- Extracted from meraki-lab-overview.svg so the layered stack can be shown
+       on its own next to the layer table in Intro01_overview.md. Wording is
+       kept platform-neutral because the table beneath it covers both the
+       Meraki and IOS XE tracks.
+       This file is referenced from Markdown via <img src>, so the page's CSS
+       and webfonts do not reach it and the accessibility markup below is not
+       exposed to screen readers - the img alt attribute is the accessible
+       name. title/desc/role are kept as documentation for anyone editing this
+       file, and would become live if the SVG were ever inlined.
+       Roboto leads the font stack to match the Material theme where it is
+       installed locally; Helvetica/Arial are the practical fallbacks.
+       The backdrop rect below uses rx="8" to match the border-radius that
+       docs/stylesheets/extra.css applies to content images - a larger radius
+       leaves the page background visible in the corners. -->
+  <title id="t">The Network as Code stack</title>
+  <desc id="d">Five layers shared by both tracks: your declarative YAML intent is merged by the Network as Code Terraform module, turned into resource-level API calls by the Terraform provider, carried over a platform transport, and applied to the target network.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#02C8FF"/></marker>
+  </defs>
+  <rect width="1200" height="180" rx="8" fill="#07182D"/>
+
+  <!-- flow -->
+  <g font-size="15" text-anchor="middle">
+    <rect x="40" y="42" width="190" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
+    <text x="135" y="72" font-weight="700" fill="#fff">Intent (you)</text>
+    <text x="135" y="95" fill="#cfe3f7">data/*.nac.yaml</text>
+    <text x="135" y="117" fill="#cfe3f7">declarative YAML</text>
+    <rect x="268" y="42" width="190" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
+    <text x="363" y="72" font-weight="700" fill="#fff">NaC module</text>
+    <text x="363" y="95" fill="#cfe3f7">merges data/ by name,</text>
+    <text x="363" y="117" fill="#cfe3f7">renders the data model</text>
+    <rect x="496" y="42" width="190" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
+    <text x="591" y="72" font-weight="700" fill="#fff">Provider</text>
+    <text x="591" y="95" fill="#cfe3f7">Terraform provider</text>
+    <text x="591" y="117" fill="#cfe3f7">plan, diff, converge</text>
+    <rect x="724" y="42" width="190" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
+    <text x="819" y="72" font-weight="700" fill="#fff">Transport</text>
+    <text x="819" y="95" fill="#cfe3f7">REST over HTTPS or</text>
+    <text x="819" y="117" fill="#cfe3f7">NETCONF over SSH</text>
+    <rect x="952" y="42" width="208" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
+    <text x="1056" y="72" font-weight="700" fill="#fff">Target</text>
+    <text x="1056" y="95" fill="#cfe3f7">Meraki Dashboard config</text>
+    <text x="1056" y="117" fill="#cfe3f7">or device running config</text>
+  </g>
+  <g stroke="#02C8FF" stroke-width="2.5" marker-end="url(#a)">
+    <line x1="230" y1="90" x2="266" y2="90"/><line x1="458" y1="90" x2="494" y2="90"/>
+    <line x1="686" y1="90" x2="722" y2="90"/><line x1="914" y1="90" x2="950" y2="90"/>
+  </g>
+</svg>
