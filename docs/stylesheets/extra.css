@@ -809,7 +809,7 @@
 }
 
 /* Scale SVGs up to fill the GLightbox viewport (SVGs have no pixel size to grow from). */
-.gslide-image img[src$=".svg"] {
+.glightbox-container .gslide-image img[src$=".svg"] {
     width: 95vw;
     max-width: 95vw;
     height: auto;
