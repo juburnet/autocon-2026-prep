@@ -93,23 +93,46 @@ terraform apply
   nac-validate -r rules data/**/*.nac.yaml
   ```
 
-- `tests/templates/` holds a [`nac-test`](https://github.com/netascode/nac-test)
-  Robot Framework suite that connects to each live device over NETCONF and checks
-  it against the YAML model (`devices/hostname.robot` verifies the device's
-  configured hostname matches `devices[].variables.HOSTNAME`). The NETCONF
-  transport (`tests/templates/iosxe_netconf.py`) uses the `ncclient` package,
-  which isn't one of `nac-test`'s own dependencies and needs installing
-  separately:
+- `tests/templates/` holds the [`nac-test`](https://github.com/netascode/nac-test)
+  Robot Framework templates taken from `nac-iosxe` **v1.0.0**
+  (`templates/iosxe/test/`). They talk to each device over NETCONF on port 830
+  using `scrapli-netconf`, issue a `<get-config>` against the running
+  datastore, and assert over the returned XML with XPath. Only the four
+  suites relevant to this lab are vendored — `access_lists`, `banner`,
+  `system` and `vlan` — out of the ~59 upstream ships.
+
+  `nac-test` does not depend on `scrapli-netconf`, so install it alongside:
 
   ```sh
-  pip install ncclient
+  pip install nac-test scrapli-netconf
   ```
 
-  It authenticates with the same `IOSXE_USERNAME` / `IOSXE_PASSWORD` /
-  `IOSXE_INSECURE` env vars as the Terraform provider (see Prerequisites above).
-  Needs the merged model written to disk first:
+  Authentication reuses the same `IOSXE_USERNAME` / `IOSXE_PASSWORD` /
+  `IOSXE_INSECURE` env vars as the Terraform provider (see Prerequisites
+  above). The merged model has to be on disk first:
 
   ```sh
   terraform apply -target=module.iosxe.module.model -auto-approve
   nac-test -d ./xe_merged_config.nac.yaml -t ./tests/templates -o ./tests/results
   ```
+
+  > **These suites currently assert nothing against this lab.** Every
+  > upstream template is device-centric — each one is guarded by
+  > `{% if device.configuration.<section> is defined %}` and reads config
+  > from `iosxe.devices[].configuration`. This lab deliberately authors
+  > config elsewhere: the banner and hostname live under `iosxe.global`,
+  > `AccessLayerACL` under `device_groups[].configuration`, and VLANs
+  > 10/20/99 under `templates[].configuration`. None of the four devices has
+  > a `configuration` block, so every guard is false and the suite renders
+  > to zero test cases.
+  >
+  > Pointing `nac-test` at a resolved model would fix it, but the module
+  > writes the *raw* merged model — `write_model_file` serialises
+  > `local.rendered.raw`, while group and template resolution happens
+  > against `local.rendered.resolved` inside Terraform and never reaches
+  > disk. Closing the gap needs either device-centric authoring (which would
+  > remove the device-group and template lesson) or a lab-specific template
+  > that walks `device_groups` and `templates` itself.
+  >
+  > For now, verification during the lab is done with `show` commands —
+  > see [Applying Part 2](../docs/IOSXE05_applying.md).
