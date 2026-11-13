@@ -51,6 +51,30 @@ step - NaC reads the template library, finds where it's referenced (here, a
 device group instead of a network), and merges the template's configuration
 into every member at render time.
 
+## Verifying it on the devices
+
+Once `terraform apply` has finished, connect to `Access1` or `Access2` with
+Solar-PuTTY and run:
+
+```text
+show access-lists | section AccessLayerACL
+show vlan brief
+show running-config | include ^hostname
+```
+
+You should see:
+
+- `AccessLayerACL` with `10 permit 198.18.128.0, wildcard bits 0.0.63.255`,
+  from the device group in step 4.
+- VLANs 10 (`DATA`), 20 (`VOICE`) and 99 (`MGMT`), from the template above.
+- The hostname matching the device name, from the global `${HOSTNAME}`
+  variable. Log in again to see the new login banner as well.
+
+Run the same commands on `Border` or `Core`: the hostname and banner are
+there, but `AccessLayerACL` is not, and `show vlan brief` lists only VLAN 1
+and the default 1002-1005 entries - none of VLANs 10, 20 or 99. That's the
+device group and template scoping working as intended.
+
 ---
 
 **← Previous:** [Device groups](IOSXE03_device_groups.md) · **Next:** [Applying Part 2](IOSXE05_applying.md)

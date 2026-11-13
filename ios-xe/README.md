@@ -55,7 +55,7 @@ yet — only device identity (`name`/`host`/`HOSTNAME`) is currently modeled.
   (fetched automatically as a dependency of the `nac-iosxe` module).
 - All 4 IOS-XE devices share one set of SSH credentials, set via the
   provider's environment variables:
-  - `IOSXE_USERNAME` (e.g. `admin`)
+  - `IOSXE_USERNAME` (`nac_admin` in this lab)
   - `IOSXE_PASSWORD`
   - Optionally `IOSXE_INSECURE=true` to skip SSH host-key verification (useful
     for CML-hosted lab nodes); this is already the provider default.
