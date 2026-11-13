@@ -58,7 +58,7 @@ The nac module matches `name: !env branch_name` against the network already
 defined in step 3 and deep-merges the four templates' configuration into it.
 Change a rule in the template once, and it propagates to every network that
 references it - the same reusability/consistency/maintainability trade-off
-you'll see again in IOS-XE Part 2, step 4.
+you'll see again in IOS-XE Part 2, step 5.
 
 By the time this merge happens, the two files stop being separate concerns -
 `terraform apply` writes one fully-resolved result to
