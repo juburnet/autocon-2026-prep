@@ -27,14 +27,6 @@ shared device credentials used throughout this section.
     resource, so a failure part-way through can leave a device partly
     configured. See the [Glossary](Glossary.md) for datastore terms.
 
-!!! note "NETCONF is the only transport in play"
-    The lab devices have `netconf-yang` and the candidate datastore
-    enabled, but **not** `restconf` - the RESTCONF API is off. The Robot
-    Framework templates vendored under `ios-xe/tests/templates/` are an
-    older RESTCONF-based set and are not run by the IOS-XE lab or by the
-    CI pipeline. Replacing them with the NETCONF templates that `nac-iosxe`
-    now ships is tracked separately.
-
 ## Open Solar-PuTTY
 
 Solar-PuTTY is an enhanced SSH client that provides a tabbed interface for
