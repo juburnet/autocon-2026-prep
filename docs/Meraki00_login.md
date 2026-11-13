@@ -1,10 +1,7 @@
 # Part 1 - Meraki
 
 <figure markdown="span">
-  ![Part 1 - Meraki lab overview](assets/meraki-lab-overview.svg)<figcaption>How the
-  six steps fit together: your YAML becomes a branch network via the Network as
-  Code module, the Meraki provider and the Dashboard API. Click the diagram to
-  open it full size.</figcaption>
+  ![Part 1 - Meraki lab overview](assets/meraki-lab-overview.svg)
 </figure>
 
 ## Step 1 - Log In and Identify Your Lab Organization
