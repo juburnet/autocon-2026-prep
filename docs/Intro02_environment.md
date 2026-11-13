@@ -35,13 +35,13 @@ and Solar-PuTTY already installed - connect to it through WebRDP.
     - An active connection to the **lab VPN** - the GitLab instance and the
       virtualized IOS-XE devices (CML) only live inside the lab network, not
       on the public internet. On VPN, you'll reach GitLab directly (see
-      [part 2](#2-gitlab-cicd) below) and SSH to the IOS-XE devices directly
+      [part 2](#2-cicd) below) and SSH to the IOS-XE devices directly
       too (see [part 4](#4-ios-xe-virtual-lab)), instead of going through the
       jump machine for either.
 
 The next few sections cover the tools already set up for you on the jump
 machine - VS Code, its YAML linting extension, and WSL - before you clone the
-lab repo in [part 2](#2-gitlab-cicd).
+lab repo in [part 2](#2-cicd).
 
 ### VS Code
 
@@ -62,6 +62,19 @@ Key features that make VS Code ideal for Network as Code:
 - **Multi-file editing** - work with multiple configuration files
   simultaneously
 - **File explorer** - easy navigation through project folders and files
+
+**Open your project folder:**
+
+1. Double-click the **Visual Studio Code** icon on the Windows desktop.
+2. Click **File → Open Folder**.
+3. In the address bar, type or paste: `/Desktop/network-as-code` - an empty
+   folder already created for you on the jump machine's desktop.
+4. Click **OK**.
+
+!!! note "Nothing to see yet"
+    This folder is empty until you clone the lab repo into it from a WSL
+    terminal, later on this page (see [WSL](#wsl) below, then [Clone the
+    starter repository](#clone-the-starter-repository)).
 
 ### YAML linting with the Red Hat extension
 
@@ -95,9 +108,37 @@ highlighting and error detection automatically as you edit YAML files.
 ### WSL
 
 Windows Subsystem for Linux (WSL) lets you run a Linux environment directly
-on Windows without a virtual machine. WSL is pre-installed in this lab, and
-you'll use it to run Terraform commands - most DevOps tools, including
-Terraform, are designed for Linux.
+on Windows without a virtual machine. WSL is pre-installed and already
+enabled on the jump machine, and you'll use it to run `git` and Terraform
+commands - most DevOps tools, including Terraform, are designed for Linux.
+
+Open a terminal in VS Code (**Terminal → New Terminal**, or
+++ctrl+grave++) - on the jump machine this opens PowerShell by default,
+already positioned in the project folder you opened earlier. Drop into the
+Linux environment by running:
+
+```powershell
+wsl
+```
+
+<figure markdown="span">
+  ![Dropping into WSL from a PowerShell terminal already in the project folder](assets/wsl-enable.png){ width="70%" }<figcaption>Running
+  `wsl` from PowerShell drops you into an Ubuntu shell, already positioned
+  in the same project folder.</figcaption>
+</figure>
+
+Your prompt changes to a Linux-style shell - the project folder comes along
+with you, automatically mapped to its path under `/mnt/c/...`. You'll run
+every `git` and Terraform command in this lab from this WSL shell, not
+directly from PowerShell.
+
+!!! tip "Using your own Windows laptop instead?"
+    If WSL isn't installed on your own machine yet:
+
+    1. Open PowerShell and run `wsl --install -d Ubuntu`.
+    2. Restart your computer when prompted.
+    3. Open a terminal in your project folder and run `wsl` as above to
+       drop into it.
 
 ## 2. CI/CD
 
@@ -116,35 +157,29 @@ watch pipelines, open merge requests, etc.) either:
   with the same credentials, and work with whatever local editor/terminal
   you set up in [part 1](#1-windows-jump-machine).
 
-For now, the next few steps just get the starter repo in place: clone it,
-open it in VS Code, and confirm Autosave is on before you start editing.
+For now, the next step just gets the starter repo in place: clone it into
+the project folder you already have open in VS Code, then confirm Autosave
+is on before you start editing.
 
 ### Clone the starter repository
 
-From a WSL terminal, clone the public starter repo into a dedicated project
-directory on your desktop: `/Desktop/network-as-code`. This is your
-workspace for both tracks - it already contains a `meraki/` and an `ios-xe/`
-folder, each with its own `main.tf`, `data/`, and `data-lab-task/`.
+You should already have `/Desktop/network-as-code` open in VS Code and a
+WSL terminal running inside it, from [part 1](#1-windows-jump-machine). From
+that WSL terminal, clone the public starter repo directly into the current
+(empty) folder:
 
 ```sh
-git clone <starter-repo-url> /Desktop/network-as-code
+git clone <starter-repo-url> .
 ```
+
+This is your workspace for both tracks - it now contains a `meraki/` and an
+`ios-xe/` folder, each with its own `main.tf`, `data/`, and `data-lab-task/`.
 
 !!! note "Not your GitLab project yet"
     This clones the public starter repo, not your lab GitLab project -
     that's why no VPN or GitLab login is needed for this step. [CI/CD
     Pipeline](Meraki07_cicd.md) walks through repointing this same repo at
     your GitLab project before you push anything.
-
-### Open VS Code
-
-To begin working with your project in a development-friendly environment,
-open your project folder in VS Code:
-
-1. Double-click the **Visual Studio Code** icon on the Windows desktop.
-2. Click **File → Open Folder**.
-3. In the address bar, type or paste: `/Desktop/network-as-code`.
-4. Click **OK**.
 
 ### Check Autosave is on
 
@@ -201,7 +236,7 @@ in it before you start running Terraform against it. Here's `meraki/main.tf`:
 
 ```hcl title="meraki/main.tf"
 module "meraki" {
-  source           = "github.com/netascode/terraform-meraki-nac-meraki"
+  source           = "github.com/netascode/terraform-meraki-nac-meraki?ref=v0.13.0-beta.1"
   yaml_directories = ["data"]
   write_model_file = "meraki_merged_configuration.nac.yaml"
 }
@@ -222,13 +257,14 @@ Understanding the configuration:
   the Network as Code for Meraki module on GitHub, published by Cisco under
   the `netascode` organization. The module handles all the complexity of
   translating YAML configurations into the Terraform HashiCorp Configuration
-  Language (HCL) code needed by the Meraki Terraform provider. As written
-  here, `source` has no version pinned, so Terraform tracks the latest
-  commit on the module's default branch - you could instead append a
-  `?ref=` to pin it:
-    - `?ref=v1.4.0` to pin a specific, tested release tag.
-    - `?ref=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0` to pin an exact commit,
-      when you need more granularity than a tag provides.
+  Language (HCL) code needed by the Meraki Terraform provider. The `?ref=`
+  suffix pins `source` to a specific version - here, the `v0.13.0-beta.1`
+  release tag - instead of tracking the latest commit on the module's
+  default branch. You could instead pin to:
+    - A different release tag, e.g. `?ref=v1.4.0`.
+    - An exact commit, e.g.
+      `?ref=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0`, when you need more
+      granularity than a tag provides.
 - **`yaml_directories = ["data"]`** - specifies which directories contain
   your YAML configuration files. Terraform automatically discovers and
   processes every YAML file within the `data/` folder - more flexible than
