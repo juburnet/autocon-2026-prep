@@ -1,4 +1,4 @@
-# Step 3 - `data/1_org_global.nac.yaml`: org and global settings
+# Step 3 - Configure Organization Global Settings
 
 Each lab pod shares one Meraki organization between two participants, so two
 branch networks live side by side under the same org. The organization
@@ -40,7 +40,7 @@ Two principles underpin everything from here on:
 
 ## Open and review the file
 
-Open `data/1_org_global.nac.yaml` and review the configuration. Near the top
+On your VSCode open `data/1_org_global.nac.yaml` and review the configuration. Near the top
 you'll find the organization block with its environment-driven variables:
 
 ```yaml
@@ -66,14 +66,15 @@ your local `.env` file, and later in the GitLab CI/CD variables.
 ## Set your pod's values in `.env`
 
 Edit the `.env` file you copied from `.env.example` earlier, and set
-`org_name` to your Org ID (from your welcome email or the Meraki Dashboard):
+`org_name` to the Org ID your proctor gave you (also visible in the Meraki
+Dashboard, as the `Org-[org_id]` pattern from Step 1):
 
 ```sh
 export org_name=Org-3665367146726167151
 ```
 
-You were also given the serial numbers for your pod's devices - set those
-too, along with a name of your own choosing for your branch network:
+Your proctor also gave you the serial numbers for your pod's devices - set
+those too, along with a name of your own choosing for your branch network:
 
 ```sh
 export branch_name=

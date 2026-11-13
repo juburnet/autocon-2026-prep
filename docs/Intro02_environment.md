@@ -5,8 +5,9 @@ either track:
 
 1. **Windows Jump Machine** - the shared lab desktop with VS Code, WSL, and
    Terraform pre-installed, reachable over WebRDP without a VPN.
-2. **GitLab & CI/CD** - where your lab repo lives and your pipeline runs,
-   reachable from the jump machine's browser, or directly if you're on VPN.
+2. **GitLab & CI/CD** - clone the public starter repo first, then later
+   point it at your lab GitLab project (reachable from the jump machine's
+   browser, or directly if you're on VPN) to run the pipeline.
 3. **Meraki Dashboard** - the cloud controller for Part 1, accessed with
    your own account under a Bring Your Own Account (BYOA) model.
 4. **IOS-XE Virtual Lab** - the four virtualized switches for Part 2,
@@ -101,8 +102,19 @@ Terraform, are designed for Linux.
 
 ## 2. GitLab & CI/CD
 
-Your lab repository and its CI/CD pipeline both live on a GitLab instance
-inside the lab network - it's not reachable from the public internet.
+Two different Git locations matter here, at two different points in the
+lab:
+
+- **The starter repo** - a public repository holding the lab's starting
+  files. You'll clone this first, below, to get your project onto the jump
+  machine - it's public, so no VPN or login needed.
+- **Your GitLab project** - the lab's own GitLab instance, where your CI/CD
+  pipeline actually runs. You won't touch this until [CI/CD
+  Pipeline](Meraki07_cicd.md), where you'll repoint your already-cloned repo
+  at it and push.
+
+Once you get to that step, you'll reach the GitLab instance itself (to
+watch pipelines, open merge requests, etc.) either:
 
 - **From the jump machine** - open a browser and go to the GitLab URL in the
   [Cheat Sheet](CheatSheet.md), and log in with the credentials listed
@@ -111,21 +123,25 @@ inside the lab network - it's not reachable from the public internet.
   with the same credentials, and work with whatever local editor/terminal
   you set up in [part 1](#1-windows-jump-machine).
 
-With GitLab reachable, the next few steps get your actual lab files in
-place: clone the repository, open it in VS Code, and confirm Autosave is on
-before you start editing. Later, [CI/CD Pipeline](Meraki07_cicd.md) covers
-running this same workflow through GitLab's pipeline instead of the CLI.
+For now, the next few steps just get the starter repo in place: clone it,
+open it in VS Code, and confirm Autosave is on before you start editing.
 
-### Clone the lab repository
+### Clone the starter repository
 
-From a WSL terminal, clone the lab repository into a dedicated project
+From a WSL terminal, clone the public starter repo into a dedicated project
 directory on your desktop: `/Desktop/network-as-code`. This is your
 workspace for both tracks - it already contains a `meraki/` and an `ios-xe/`
 folder, each with its own `main.tf`, `data/`, and `data-lab-task/`.
 
 ```sh
-git clone <lab-repo-url> /Desktop/network-as-code
+git clone <starter-repo-url> /Desktop/network-as-code
 ```
+
+!!! note "Not your GitLab project yet"
+    This clones the public starter repo, not your lab GitLab project -
+    that's why no VPN or GitLab login is needed for this step. [CI/CD
+    Pipeline](Meraki07_cicd.md) walks through repointing this same repo at
+    your GitLab project before you push anything.
 
 ### Open VS Code
 
@@ -232,38 +248,25 @@ Understanding the configuration:
 
 ### Copy `.env.example` to `.env`
 
-Both tracks read pod-specific values (API keys, credentials, your unique
-branch name) from shell environment variables rather than hardcoding them in
-YAML. The repo ships a template for these at the root, `.env.example`. Copy
-it to `.env` and fill in your own values:
-
 ```sh
 cp .env.example .env
 ```
 
-Then edit `.env` and `source` it before running Terraform in `meraki/` or
-`ios-xe/`:
+Open `.env` and populate just these variables - everything else in the file
+already has a working default for the lab:
 
-```sh
-source .env
-terraform plan
-```
+| Variable | Where to get it |
+|---|---|
+| `MERAKI_API_KEY` | [Step 2 - Generate Your Meraki API Key](Meraki00_login.md#step-2-generate-your-meraki-api-key) |
+| `org_name` | From your proctor |
+| `branch_name` | Your own choice - must be unique within your shared org (e.g. your initials or pod number) |
+| `branch_mx_serial` / `branch_ms_serial` / `branch_cw_serial` | From your proctor |
 
 !!! note "`.env` stays local - never committed"
-    `.env` is for **your machine only**. The root `.gitignore` explicitly
-    excludes it:
-
-    ```
-    .env
-    *.env
-    !.env.example
-    ```
-
-    Only the sanitized `.env.example` template is tracked in Git - the real
-    `.env` file with your personal values never leaves your machine and is
-    never committed. The GitLab CI/CD pipeline doesn't read `.env` either;
-    it takes the same values from GitLab CI/CD Variables instead (see the
-    Cheat Sheet).
+    `.env` is gitignored - only the blank `.env.example` template is tracked
+    in Git. See the [Cheat Sheet](CheatSheet.md) for `source`-ing it before
+    you run Terraform, and for the separate GitLab CI/CD Variables the
+    pipeline reads instead.
 
 ## 3. Meraki Dashboard (BYOA)
 

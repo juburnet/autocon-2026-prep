@@ -55,6 +55,21 @@ instead, since the pipeline never reads your local `.env`. See the
 [Cheat Sheet](CheatSheet.md) for exactly how to add them and where to find
 each value.
 
+## Point Your Repo at GitLab
+
+Up to now, `origin` on your cloned repo still points at the public starter
+repo from [Environment Setup](Intro02_environment.md) - that's where you
+cloned from, not where the pipeline lives. Before pushing anything,
+repoint `origin` at your own GitLab project (the URL from your proctor or
+the [Cheat Sheet](CheatSheet.md)):
+
+```sh
+git remote set-url origin <your-gitlab-project-url>
+git remote -v   # confirm origin now points at GitLab
+```
+
+From here on, `git push` goes to your GitLab project, not the starter repo.
+
 ## Make a Change
 
 From your WSL terminal, in the repo you already cloned in

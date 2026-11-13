@@ -19,7 +19,7 @@ are organized, and how the IOS-XE devices are wired.
 ## Part 2 - IOS-XE
 
 <figure markdown="span">
-  ![IOS-XE lab topology](assets/iosxe-lab-topology.svg)<figcaption>Border and
+  ![IOS-XE lab topology](assets/iosxe-lab-topology.svg){ width="65%" }<figcaption>Border and
   Core are the L3 core; Access1/Access2 are access switches, each hosting one
   unmanaged Alpine Linux end host. All 4 IOS-XE devices and both hosts share
   the 198.18.128.0/18 management subnet.</figcaption>

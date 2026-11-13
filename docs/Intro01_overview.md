@@ -90,7 +90,7 @@ nesting level), and applies the result. File names and numeric prefixes are
 a **reading order**, not a deployment order - Terraform builds its own
 dependency graph from the merged model.
 
-## What the stack looks like
+## What the Network as Code stack looks like
 
 Network as Code isn't a single tool, it's a layered stack. You write intent
 in YAML, and the stack turns it into platform-specific configuration. The

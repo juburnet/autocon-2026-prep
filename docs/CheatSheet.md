@@ -8,7 +8,8 @@ both parts of the workshop.
 | System | Address | Username | Password |
 |---|---|---|---|
 | Meraki Dashboard | [dashboard.meraki.com](https://dashboard.meraki.com) | *(provided separately)* | *(provided separately)* |
-| GitLab | `TODO-gitlab-url` | dcloud | C1sco12345 |
+| Starter Repo (public, clone from here) | `TODO-starter-repo-url` | - | - |
+| GitLab (your project, push here) | `TODO-gitlab-url` | dcloud | C1sco12345 |
 | Windows Jump Machine | `TODO-jump-host-url` | - | C1sco12345 |
 
 ### IOS-XE devices

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 656" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="656" viewBox="0 0 1000 656" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
   <!-- White-background companion to meraki_lab_diagram_v2.png, same visual
        language (black line-art boxes, green accent dot, bold black labels,
        blue dashed/italic caption) applied to the IOS-XE device topology. -->
