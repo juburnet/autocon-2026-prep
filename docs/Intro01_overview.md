@@ -47,12 +47,14 @@ The supported platforms include ACI (APIC), Nexus Dashboard Orchestrator
 Meraki, ISE, Secure Firewall (FMC), IOS XR, and - the two platforms this lab
 covers - **Meraki** and **IOS XE**.
 
-- **Meraki as Code** uses the `netascode/terraform-meraki-nac-meraki` module
-  and the `CiscoDevNet/meraki` provider to push configuration to the Meraki
+- **Network as Code for Meraki** uses the
+  `netascode/terraform-meraki-nac-meraki` module and the
+  `CiscoDevNet/meraki` provider to push configuration to the Meraki
   Dashboard's cloud-hosted REST API.
-- **IOS XE as Code** uses the `netascode/terraform-iosxe-nac-iosxe` module and
-  the `CiscoDevNet/iosxe` provider to push YANG-modeled configuration to
-  on-box devices (Catalyst 9000, C8000V, ISR, ASR, etc.) over NETCONF.
+- **Network as Code for IOS XE** uses the
+  `netascode/terraform-iosxe-nac-iosxe` module and the `CiscoDevNet/iosxe`
+  provider to push YANG-modeled configuration to on-box devices
+  (Catalyst 9000, C8000V, ISR, ASR, etc.) over NETCONF.
 
 The same workflow applies to every Network as Code platform; only the data
 model and transport differ.
@@ -78,9 +80,10 @@ This lab shows how Network as Code addresses each of them using:
 
 ### Terminology
 
-"Meraki as Code", "IOS XE as Code" / "IOSXE-as-Code", and "Network as Code"
-all refer to the same methodology in this guide - just applied to a
-different platform. Both parts of this lab use the same underlying mechanic:
+**Network as Code for Meraki** and **Network as Code for IOS XE** are the
+same methodology applied to different platforms. You may also see the older
+shorthands "Meraki as Code" and "IOS XE as Code" / "IOSXE-as-Code" - they
+mean the same thing. Both parts of this lab use the same underlying mechanic:
 a Terraform `nac-*` module reads every YAML file under a project's `data/`
 directory, deep-merges them into one model (matching on `name` at each
 nesting level), and applies the result. File names and numeric prefixes are

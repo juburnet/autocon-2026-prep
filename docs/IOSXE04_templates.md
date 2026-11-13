@@ -53,4 +53,4 @@ into every member at render time.
 
 ---
 
-**← Previous:** [Device groups](IOSXE03_device_groups.md) · **Next:** [Applying Part 2](IOSXE05_applying.md)
+**← Previous:** [Device groups](IOSXE03_device_groups.md) · **Next:** [Topologies](Topologies.md)

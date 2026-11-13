@@ -82,4 +82,4 @@ source of truth for a policy, referenced (not copied) everywhere it applies.
 
 ---
 
-**← Previous:** [Wireless](Meraki04_wireless.md) · **Next:** [Applying Part 1](Meraki06_applying.md)
+**← Previous:** [Wireless](Meraki04_wireless.md) · **Next:** [CI/CD pipeline](Meraki07_cicd.md)
