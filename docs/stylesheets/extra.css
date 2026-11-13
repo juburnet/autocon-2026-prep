@@ -814,4 +814,5 @@
     max-width: 95vw;
     height: auto;
     max-height: 90vh;
+    object-fit: contain;
 }
