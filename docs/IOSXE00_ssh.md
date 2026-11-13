@@ -14,10 +14,9 @@ and verify their configuration.
 
 ## This lab uses NETCONF
 
-IOS XE as Code uses **NETCONF over SSH (TCP 830)** to push configuration to
-the devices. See the
-[Cheat Sheet](CheatSheet.md) for the shared device credentials used
-throughout this section.
+Network as Code for IOS XE uses **NETCONF over SSH (TCP 830)** to push
+configuration to the devices. See the [Cheat Sheet](CheatSheet.md) for the
+shared device credentials used throughout this section.
 
 !!! info "Why NETCONF?"
     NETCONF is transactional. Terraform writes to the device's *candidate*
