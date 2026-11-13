@@ -33,7 +33,6 @@ model (matching on `name` at each nesting level), and applies the result. This m
   - `org_name`
   - `branch_name`
   - `branch_mx_serial`, `branch_ms_serial`, `branch_cw_serial`
-  - `vpn_hub_network_name`
   - `local_page_username`, `local_page_password`
   - `snmp_username`, `snmp_passphrase`
   - `v3_auth_pass`, `v3_priv_pass`

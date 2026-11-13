@@ -18,9 +18,8 @@ MX appliance being created.
 
 This is the largest file in the lab. It introduces the branch network (named
 via `!env branch_name` - unique per attendee pod) plus a reference to the
-shared hub network via `!env vpn_hub_network_name`. The hub already exists
-for the whole pod, so this file only points at it by name - it doesn't
-configure it.
+shared `Datacenter` hub network. The hub already exists for the whole pod,
+so this file only points at it by name - it doesn't configure it.
 
 For the branch network, `data/2_networks.nac.yaml` configures:
 
@@ -70,8 +69,8 @@ directly as YAML - no templates yet:
   and Infra (999) - each with its own `/24` subnet, appliance IP, and DHCP
   server settings.
 - `vpn_site_to_site_vpn`: this network as an Auto VPN **spoke**, pointed at
-  `!env vpn_hub_network_name` as its hub, with a per-subnet `use_vpn` flag -
-  every subnet rides the VPN except Guest (50), which stays local.
+  `Datacenter` as its hub, with a per-subnet `use_vpn` flag - every subnet
+  rides the VPN except Guest (50), which stays local.
 - `ports`: ports 5-6 and 13-14 trunked with VLANs 1,10,20,30,40,50,999
   allowed; ports 7-12 disabled.
 - `traffic_shaping`: global bandwidth limits, two custom performance classes
@@ -96,10 +95,10 @@ data/2_networks.nac.yaml
     │   │       └── uplinks_settings: WAN1 + WAN2 (DHCP)
     │   └── appliance
     │       ├── vlans: Data(10) · Voice(20) · Iot(30) · PCI(40) · Guest(50) · Infra(999)
-    │       ├── vpn_site_to_site_vpn: spoke → <vpn_hub_network_name>
+    │       ├── vpn_site_to_site_vpn: spoke → Datacenter
     │       ├── ports: trunk (5-6, 13-14) · disabled (7-12)
     │       └── traffic_shaping: bandwidth limits, performance classes, uplink selection
-    └── <vpn_hub_network_name>               (unmanaged - already exists)
+    └── Datacenter                           (unmanaged - already exists)
 ```
 
 **Key idea:** everything here is still "direct YAML" - no templates yet. The

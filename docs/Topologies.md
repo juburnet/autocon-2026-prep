@@ -11,7 +11,7 @@ are organized, and how the IOS-XE devices are wired.
 ## Part 1 - Meraki
 
 <figure markdown="span">
-  ![Meraki lab topology](assets/meraki_lab_diagram_v2.png)<figcaption>Each
+  ![Meraki lab topology](assets/meraki_lab_diagram_v2.png){ width="65%" }<figcaption>Each
   participant configures one Unified Branch (two participants share a pod);
   a shared Datacenter network is reachable from both.</figcaption>
 </figure>

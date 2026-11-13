@@ -20,7 +20,7 @@ open - new terms appear across almost every step.
 | WSL | Windows Subsystem for Linux - the Linux environment running inside the lab's Windows jump machine, where you'll run Terraform. |
 | Declarative vs imperative | Declarative: describe what you want (e.g. "VLAN 10 exists with name DATA"). Imperative: describe the steps (`vlan 10`, `name DATA`). Network as Code is declarative - you describe state, the module figures out the steps. |
 | candidate / running | NETCONF's two main datastores (IOS XE track only). Changes go to candidate, and a commit applies them to running (live config). |
-| BYOA | Bring Your Own Account - the model used for Meraki Dashboard access in this lab: you use your own Dashboard account and API key, shared one organization per two participants. See [Lab access](Intro01_overview.md#lab-access-byoa-model). |
+| BYOA | Bring Your Own Account - the model used for Meraki Dashboard access in this lab: you use your own Dashboard account and API key, shared one organization per two participants. See [Meraki Dashboard (BYOA)](Intro02_environment.md#3-meraki-dashboard-byoa). |
 | dCloud | Cisco's demo / lab cloud environment - where this lab is hosted. |
 
 ---

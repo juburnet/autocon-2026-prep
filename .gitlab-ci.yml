@@ -59,7 +59,6 @@ variables:
   TF_HTTP_USERNAME: "${GITLAB_USER_LOGIN}"
   TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
   TF_HTTP_SKIP_CERT_VERIFICATION: "true"
-  vpn_hub_network_name: "Datacenter"
   org_admin: "admin"
   org_admin_email: "admin-branch@netascode.cisco.com"
   v3_auth_pass: "Cisco12345"

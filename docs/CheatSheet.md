@@ -55,7 +55,6 @@ Set in `.env` (copy from `.env.example`, never commit the real file).
 | `org_name` | `!env org_name` - Meraki organization name |
 | `branch_name` | `!env branch_name` - your pod's unique network name |
 | `branch_mx_serial` / `branch_ms_serial` / `branch_cw_serial` | Appliance/switch/wireless device serials for your pod |
-| `vpn_hub_network_name` | Shared hub network referenced by every branch |
 | `IOSXE_USERNAME` / `IOSXE_PASSWORD` | Shared SSH credentials for all 4 IOS-XE devices |
 
 See `meraki/README.md` and `ios-xe/README.md` for the complete variable

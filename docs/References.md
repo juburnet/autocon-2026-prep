@@ -18,6 +18,18 @@ community channels.
 | NAC Validate | [github.com/netascode/nac-validate](https://github.com/netascode/nac-validate) |
 | NAC Test | [github.com/netascode/nac-test](https://github.com/netascode/nac-test) |
 
+## Editor & environment tooling
+
+Pre-installed on the Windows jump machine - see [Environment
+Setup](Intro02_environment.md) for how each is used in this lab.
+
+| Tool | Link |
+|---|---|
+| VS Code | [code.visualstudio.com](https://code.visualstudio.com/) |
+| YAML extension (Red Hat) | [marketplace.visualstudio.com](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) |
+| WSL | [learn.microsoft.com/windows/wsl](https://learn.microsoft.com/windows/wsl/about) |
+| uv | [docs.astral.sh/uv](https://docs.astral.sh/uv/) |
+
 ## Community & support
 
 | Channel | Contact |

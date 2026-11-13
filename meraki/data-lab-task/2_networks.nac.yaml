@@ -126,7 +126,7 @@ meraki:
                 vpn_site_to_site_vpn:
                   mode: spoke
                   hubs:
-                    - hub_network_name: !env vpn_hub_network_name
+                    - hub_network_name: Datacenter
                       use_default_route: true
                   subnets:
                     - local_subnet: 10.1.10.0/24
@@ -251,5 +251,5 @@ meraki:
                         performance_class:
                           type: custom
                           custom_performance_class_name: Critical_Apps
-            - name: !env vpn_hub_network_name
+            - name: Datacenter
               managed: false

@@ -1,13 +1,24 @@
 # Environment Setup
 
-Before diving into either track, get familiar with the two tools you'll use
-to write and apply your YAML throughout the lab: VS Code as your editor, and
-WSL as the Linux shell that runs Terraform.
+This lab has four moving pieces. Get oriented on all four before diving into
+either track:
 
-## Accessing your lab machine
+1. **Windows Jump Machine** - the shared lab desktop with VS Code, WSL, and
+   Terraform pre-installed, reachable over WebRDP without a VPN.
+2. **GitLab & CI/CD** - where your lab repo lives and your pipeline runs,
+   reachable from the jump machine's browser, or directly if you're on VPN.
+3. **Meraki Dashboard** - the cloud controller for Part 1, accessed with
+   your own account under a Bring Your Own Account (BYOA) model.
+4. **IOS-XE Virtual Lab** - the four virtualized switches for Part 2,
+   reached over SSH either via the jump machine or directly over VPN.
 
-This lab runs on a shared Windows jump machine with VS Code, WSL, and
-Terraform already installed - connect to it through WebRDP.
+See the [Cheat Sheet](CheatSheet.md) at any point for the exact URLs and
+credentials for each of these.
+
+## 1. Windows Jump Machine
+
+This lab runs on a shared Windows jump machine with VS Code, WSL, Terraform,
+and Solar-PuTTY already installed - connect to it through WebRDP.
 
 !!! note "WebRDP connection steps coming soon"
     Instructions for connecting to your jump machine over WebRDP will be
@@ -23,51 +34,16 @@ Terraform already installed - connect to it through WebRDP.
       tooling (`nac-validate`, `nac-test`) is installed and run through it
     - An active connection to the **lab VPN** - the GitLab instance and the
       virtualized IOS-XE devices (CML) only live inside the lab network, not
-      on the public internet
+      on the public internet. On VPN, you'll reach GitLab directly (see
+      [part 2](#2-gitlab-cicd) below) and SSH to the IOS-XE devices directly
+      too (see [part 4](#4-ios-xe-virtual-lab)), instead of going through the
+      jump machine for either.
 
-## Lab access - BYOA model
+The next few sections cover the tools already set up for you on the jump
+machine - VS Code, its YAML linting extension, and WSL - before you clone the
+lab repo in [part 2](#2-gitlab-cicd).
 
-This lab uses virtualized IOS XE devices in Cisco Modeling Labs (CML), a
-GitLab instance running in the lab environment, and a Meraki Dashboard
-organization (shared with one other participant, see below) that you access
-with your own account under the Bring Your Own Account (BYOA) model. You
-will use your own Meraki Dashboard account and your own API key throughout
-both labs - Cisco does not store or manage your credentials.
-
-If the email you used for the lab reservation is associated with an existing
-Dashboard account, you should have received a notification that new Cisco
-Meraki administrator privileges have been granted to your account. Follow
-the instructions in the email to accept the invite.
-
-
-<figure markdown="span">
-  ![Meraki Dashboard - create password](assets/image2.png){ width="70%" }<figcaption>Creating
-  your Dashboard password on first login.</figcaption>
-</figure>
-
-
-If this is your first time accessing Meraki Dashboard with this email, the
-message will guide you to create a password.
-
-<figure markdown="span">
-  ![Meraki Dashboard - organization selector](assets/image3.png){ width="70%" }<figcaption>Selecting
-  your shared lab organization from the top-left org switcher.</figcaption>
-</figure>
-
-
-!!! danger "Shared organization"
-    One Meraki organization is shared by **two participants**. Each of you
-    will configure **exactly one** network within that shared org - make
-    sure your network name (`branch_name`) is unique so it doesn't collide
-    with your pod partner's.
-
-This lab is designed for learning; the configurations shown are not intended
-for production use as-is. Production deployments require additional
-considerations around state storage, secret management, access control, and
-approval workflows - most of which we note in context but do not implement
-here.
-
-## What is VS Code?
+### VS Code
 
 Visual Studio Code (VS Code) is a free, lightweight, yet powerful source
 code editor developed by Microsoft. It runs on Windows, macOS, and Linux and
@@ -87,7 +63,7 @@ Key features that make VS Code ideal for Network as Code:
   simultaneously
 - **File explorer** - easy navigation through project folders and files
 
-## YAML linting with the Red Hat extension
+### YAML linting with the Red Hat extension
 
 Since Network as Code configurations are written in YAML, having proper
 syntax validation is essential. VS Code supports YAML linting through the
@@ -116,18 +92,29 @@ highlighting and error detection automatically as you edit YAML files.
     auto-completion, make sure every configuration file you create ends in
     `.nac.yaml`.
 
-## What is WSL?
+### WSL
 
 Windows Subsystem for Linux (WSL) lets you run a Linux environment directly
 on Windows without a virtual machine. WSL is pre-installed in this lab, and
 you'll use it to run Terraform commands - most DevOps tools, including
 Terraform, are designed for Linux.
 
-## Setting up your project
+## 2. GitLab & CI/CD
 
-With the tools introduced, the next few steps get your actual lab files in
+Your lab repository and its CI/CD pipeline both live on a GitLab instance
+inside the lab network - it's not reachable from the public internet.
+
+- **From the jump machine** - open a browser and go to the GitLab URL in the
+  [Cheat Sheet](CheatSheet.md), and log in with the credentials listed
+  there.
+- **Over VPN, from your own laptop** - reach the same GitLab URL directly,
+  with the same credentials, and work with whatever local editor/terminal
+  you set up in [part 1](#1-windows-jump-machine).
+
+With GitLab reachable, the next few steps get your actual lab files in
 place: clone the repository, open it in VS Code, and confirm Autosave is on
-before you start editing.
+before you start editing. Later, [CI/CD Pipeline](Meraki07_cicd.md) covers
+running this same workflow through GitLab's pipeline instead of the CLI.
 
 ### Clone the lab repository
 
@@ -277,6 +264,58 @@ terraform plan
     never committed. The GitLab CI/CD pipeline doesn't read `.env` either;
     it takes the same values from GitLab CI/CD Variables instead (see the
     Cheat Sheet).
+
+## 3. Meraki Dashboard (BYOA)
+
+Meraki Dashboard access in this lab follows the Bring Your Own Account
+(BYOA) model: you use your own Meraki Dashboard account and your own API
+key throughout Part 1 - Cisco does not store or manage your credentials.
+Cisco grants your account administrator access to a shared lab
+organization, but the account, email, and API key are all yours.
+
+If the email you used for the lab reservation is associated with an existing
+Dashboard account, you should have received a notification that new Cisco
+Meraki administrator privileges have been granted to your account. Follow
+the instructions in the email to accept the invite.
+
+<figure markdown="span">
+  ![Meraki Dashboard - create password](assets/image2.png){ width="70%" }<figcaption>Creating
+  your Dashboard password on first login.</figcaption>
+</figure>
+
+If this is your first time accessing Meraki Dashboard with this email, the
+message will guide you to create a password.
+
+<figure markdown="span">
+  ![Meraki Dashboard - organization selector](assets/image3.png){ width="70%" }<figcaption>Selecting
+  your shared lab organization from the top-left org switcher.</figcaption>
+</figure>
+
+!!! danger "Shared organization"
+    One Meraki organization is shared by **two participants**. Each of you
+    will configure **exactly one** network within that shared org - make
+    sure your network name (`branch_name`) is unique so it doesn't collide
+    with your pod partner's.
+
+This lab is designed for learning; the configurations shown are not intended
+for production use as-is. Production deployments require additional
+considerations around state storage, secret management, access control, and
+approval workflows - most of which we note in context but do not implement
+here.
+
+## 4. IOS-XE Virtual Lab
+
+Part 2 of the lab uses four virtualized IOS-XE switches (`Border`, `Core`,
+`Access1`, `Access2`), hosted in Cisco Modeling Labs (CML) inside the lab
+network - see [Topologies](Topologies.md) for the full diagram and IP
+addresses. All four devices share one set of SSH credentials, listed in the
+[Cheat Sheet](CheatSheet.md).
+
+- **From the jump machine** - use Solar-PuTTY, pre-installed with every
+  device already configured. See [Part 2 - SSH to the lab
+  devices](IOSXE00_ssh.md) for the full walkthrough.
+- **Over VPN, from your own laptop** - SSH to each device's IP address
+  directly, using the credentials in the Cheat Sheet.
 
 ---
 
