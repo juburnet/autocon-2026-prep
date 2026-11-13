@@ -51,7 +51,7 @@ dependency graph (not file order) decides real apply order.
 
 ## How this merges into each device
 
-When you apply in [Applying Part 2](IOSXE05_applying.md), the module
+When you run `terraform apply`, the module
 deep-merges every `data/*.nac.yaml` file - global, device groups, devices -
 into one resolved view per device, following the same global → device group
 → device precedence used throughout this lab. Three rules drive that merge:
@@ -95,9 +95,9 @@ iosxe:
 `access_lists` block - they're never listed under `ACCESS_SWITCHES.devices`.
 
 !!! note "Verifying this"
-    [Applying Part 2](IOSXE05_applying.md) runs the real `terraform apply`
-    and shows you how to confirm, both in the generated model file and over
-    SSH, that this ACL lands on `Access1`/`Access2` only.
+    [Templates](IOSXE04_templates.md) closes with the `show` commands that
+    confirm this ACL lands on `Access1`/`Access2` only - and that `Border`
+    and `Core` never receive it.
 
 ---
 
