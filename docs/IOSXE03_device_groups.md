@@ -7,7 +7,7 @@ concrete example.
 Device groups are the right tool whenever configuration follows a role or
 scope rather than a single device:
 
-- **Role-based** - access switches vs. core switches vs. border routers.
+- **Role-based** - access switches vs. core switches vs. border switches.
 - **Location-based** - everything in one site or rack.
 - **Service rollout** - the same service config across every device running it.
 - **Security policy** - a common ACL or hardening baseline across a fleet.

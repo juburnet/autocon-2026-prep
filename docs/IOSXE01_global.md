@@ -48,7 +48,7 @@ iosxe:
         hostname: ${HOSTNAME}
 ```
 
-**Key idea:** variables let you write one banner template instead of six -
+**Key idea:** variables let you write one banner template instead of four -
 one place to define the hostname per device, used in multiple configuration
 sections (banner text *and* the `hostname` CLI command).
 
