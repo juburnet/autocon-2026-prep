@@ -810,9 +810,15 @@
 
 /* Scale SVGs up to fill the GLightbox viewport (SVGs have no pixel size to grow from). */
 .glightbox-container .gslide-image img[src$=".svg"] {
-    width: 95vw;
+    width: 1200px;
     max-width: 95vw;
     height: auto;
     max-height: 90vh;
     object-fit: contain;
+}
+
+/* Inline overview diagram sits smaller on the page; the lightbox (1200px) is larger. */
+.md-typeset img[src$="meraki-lab-overview.svg"] {
+    width: 75%;
+    height: auto;
 }
