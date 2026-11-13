@@ -1,4 +1,4 @@
-# .gitlab-ci.yml — autocon-2026-prep
+# .gitlab-ci.yml — autocon-2026
 #
 # Single flat pipeline for the Meraki-only workshop lab. There is no longer
 # a root-orchestrator + child-pipeline split (that pattern existed to run

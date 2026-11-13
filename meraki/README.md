@@ -100,12 +100,14 @@ in the directory into one model before Terraform ever runs, so:
 
 ## Testing
 
-- `rules/` holds [`nac-validate`](https://github.com/netascode/nac-validate) semantic
-  rules (e.g. `101_admin_name.py` blocks an org administrator named `root`):
+- `.rules/` holds [`nac-validate`](https://github.com/netascode/nac-validate) semantic
+  rules (e.g. `101_admin_name.py` blocks an org administrator named `root`).
+  `nac-validate` auto-discovers both `.schema.yaml` and `.rules/` from the
+  current directory, no flags needed:
 
   ```sh
   pip install nac-validate
-  nac-validate -r rules data/*.nac.yaml
+  nac-validate data/*.nac.yaml
   ```
 
 - `tests/templates/` holds a [`nac-test`](https://github.com/netascode/nac-test)

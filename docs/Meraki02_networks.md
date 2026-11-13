@@ -1,10 +1,9 @@
-# Step 3 - `data/2_networks.nac.yaml`: networks and the MX appliance
+# Step 3 - Configure Networks, VLAN, Appliance Settings
 
-## Move this step's file into place
+## Deploy Networks
 
-Move this step's file into `data/`, the same way you did for step 1 -
-`data-lab-task/` is never read by Terraform. Copying works just as well as
-moving, as long as the file ends up in `data/`:
+As explained earlier, the module is configured (by `yaml_directories = ["data"]`) to deploy only configuration that is in `data` folder. We already prepared the network configuration for you, and it is currently in the 
+`data-lab-task/` folder. This folder is never read by Terraform. So in order to deploy the Network as configured, we need to copy or move the network configuration file (`2_networks.nac.yaml`) to `data` folder. 
 
 ```sh
 cd meraki
@@ -53,7 +52,7 @@ in the lab. Templates (the fifth element) don't appear until step 7.
   respectively - the policy and the VLAN it tags into are two separate
   objects working together.
 
-### The MX appliance device
+### The Appliance (MX) device
 
 One `devices` entry claims the MX by serial (`!env branch_mx_serial`), places
 it on the map (`lat`/`lng`/`address`), and configures
@@ -63,7 +62,7 @@ dynamic (DHCP) IPv4 addressing.
 ### Appliance configuration
 
 Everything under the network's own `appliance:` key is still authored
-directly as YAML - no templates yet:
+directly as YAML:
 
 - `vlans`: six VLANs - Data (10), Voice (20), Iot (30), PCI (40), Guest (50),
   and Infra (999) - each with its own `/24` subnet, appliance IP, and DHCP
@@ -101,9 +100,6 @@ data/2_networks.nac.yaml
     └── Datacenter                           (unmanaged - already exists)
 ```
 
-**Key idea:** everything here is still "direct YAML" - no templates yet. The
-VLANs defined here (10/20/30/40/50/999) are what step 4's switch ports and
-step 5's SSIDs reference by ID.
 
 ## Testing it: run `nac-test` right after this step
 

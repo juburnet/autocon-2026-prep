@@ -10,17 +10,9 @@ An organization in Cisco Meraki is the highest-level container in the cloud
 Dashboard hierarchy - it represents a single company, institution, or
 department, and every network you configure belongs to one. The
 organization level is where settings apply to *everything* below it,
-regardless of network or device. This file sets:
+regardless of network or device. 
 
-- The admin user and a `login_security` policy (password expiration, lockout
-  thresholds, idle timeout).
-- Org-level SNMPv3 (no v2c), with the auth/priv passphrases pulled from
-  environment variables via the `!env` tag rather than hardcoded in YAML.
-- An org-wide `appliance.vpn_firewall_rules` rule set - shared-services and
-  inter-VLAN-isolation rules every spoke inherits through the VPN hub, so you
-  write them once instead of per-branch.
-
-## Two ideas worth internalizing now
+## Two Key Principles
 
 Two principles underpin everything from here on:
 
@@ -61,7 +53,9 @@ organizations:
 
 Notice that the organization's `name` uses the `org_name` variable, resolved
 by the `!env` tag instead of being hardcoded. You'll set that value first in
-your local `.env` file, and later in the GitLab CI/CD variables.
+your local `.env` file, and later in the GitLab CI/CD variables. 
+
+In the provided file, there are other settings, such as SNMP as well as some firewall VPN rules. Examine the configuration. 
 
 ## Set your pod's values in `.env`
 
@@ -70,17 +64,17 @@ Edit the `.env` file you copied from `.env.example` earlier, and set
 Dashboard, as the `Org-[org_id]` pattern from Step 1):
 
 ```sh
-export org_name=Org-3665367146726167151
+export org_name=Org-12345678901234
 ```
 
-Your proctor also gave you the serial numbers for your pod's devices - set
+Your proctor also provided you the serial numbers for your pod's devices - set
 those too, along with a name of your own choosing for your branch network:
 
 ```sh
-export branch_name=
-export branch_mx_serial=
-export branch_ms_serial=
-export branch_cw_serial=
+export branch_name=Your Own Branch Name
+export branch_mx_serial=XXX-XXX-XXX
+export branch_ms_serial=XXX-XXX-XXX
+export branch_cw_serial=XXX-XXX-XXX
 ```
 
 `branch_name` can be anything unique to you - for example `"Shawn's
@@ -100,9 +94,36 @@ two branch networks share this organization.
     every branch.
 
 Review the rest of the file: it's a deliberately small example that
-demonstrates automating organization creation with just a few settings. Feel
-free to adjust any of the `login_security` values to see how a change flows
-through validation and `terraform plan`.
+demonstrates automating organization creation with just a few settings. 
+
+## Source `.env` and Initialize Terraform
+
+With all five variables set, source the file from the repo root so
+Terraform's process picks them up, then `cd` into `meraki/` and initialize
+the module - commands like `terraform init`/`plan`/`apply` always run from
+`meraki/` or `ios-xe/`, never from the repository root:
+
+```sh
+source .env
+cd meraki
+terraform init
+```
+
+```text
+Initializing the backend...
+
+Initializing modules...
+
+Initializing provider plugins...
+
+Terraform has been successfully initialized!
+```
+
+!!! note "Re-source after editing `.env`"
+    Variables are only read into your shell when you `source .env`. If you
+    come back and edit `.env` later (a new serial, a different
+    `branch_name`), `source .env` again before your next `terraform plan`
+    or `apply` - otherwise Terraform still sees the old values.
 
 ## Finding the documentation
 
@@ -146,40 +167,181 @@ of mistakes, both running before anything touches the Dashboard:
 
 ### Try it: a syntax failure
 
-`login_security.num_different_passwords` in this file is `5`.
+`login_security.num_different_passwords` in this file is `5` (line 13).
 `meraki/.schema.yaml` declares that field as `int(min=5, required=False)` -
-`5` is the lowest legal value. Temporarily lower it to `3` and regenerate +
-check the merged model. The `terraform apply` below is limited by `-target`
-to the one resource that writes the merged model file to disk - it does
-**not** contact the Dashboard or change any configuration, exactly like the
-CI `validate` stage:
+`5` is the lowest legal value. From a terminal **in `meraki/`**, run
+`nac-validate` against the file as-is first, to see a clean pass - it
+auto-discovers `.schema.yaml` (and `.rules/`, if any rule applies) with no
+extra flags needed:
 
 ```sh
-cd meraki
-terraform apply -auto-approve -input=false -target='module.meraki.module.model.local_sensitive_file.model[0]'
-nac-validate ./meraki_merged_configuration.nac.yaml
+nac-validate data/1_org_global.nac.yaml --verbosity DEBUG
 ```
 
-You should see an error citing `num_different_passwords` below the schema's
-`min=5` - a syntax-level violation, caught before anything else runs. Set it
-back to `5` when you're done.
+```text
+INFO - Artifact layer [local]: schema .schema.yaml
+INFO - Loading of bundles and modules is disabled
+INFO - Loading schema from .schema.yaml
+INFO - No rules found at default path
+INFO - Validate file: data/1_org_global.nac.yaml
+
+────────────────────────────────────────────────────────────────────────────────
+Validation Summary
+────────────────────────────────────────────────────────────────────────────────
+  ✓ Syntax validation: PASSED (1 files)
+  ✓ Semantic validation: PASSED
+────────────────────────────────────────────────────────────────────────────────
+```
+
+Now temporarily lower `num_different_passwords` to `3` (line 13) and run
+the exact same command again:
+
+```sh
+nac-validate data/1_org_global.nac.yaml --verbosity DEBUG
+```
+
+!!! failure "Syntax validation: FAILED"
+    ```text
+    INFO - Artifact layer [local]: schema .schema.yaml
+    INFO - Loading of bundles and modules is disabled
+    INFO - Loading schema from .schema.yaml
+    INFO - No rules found at default path
+    INFO - Validate file: data/1_org_global.nac.yaml
+    DEBUG - Syntax error 'data/1_org_global.nac.yaml': meraki.domains.[name=US].organizations.[name=Dev-SM].login_security.num_different_passwords: 3 is less than 5
+
+      • data/1_org_global.nac.yaml: meraki.domains.[name=US].organizations.[name=Dev-SM].login_security.num_different_passwords: 3 is less than 5
+
+    ────────────────────────────────────────────────────────────────────────────────
+    Validation Summary
+    ────────────────────────────────────────────────────────────────────────────────
+      ✗ Syntax validation: FAILED (1 error)
+    ────────────────────────────────────────────────────────────────────────────────
+    ```
+
+A syntax-level violation, caught before anything else runs - semantic
+validation doesn't even get a chance to start. Set `num_different_passwords`
+back to `5` when you're done, and re-run the command to confirm it passes
+again.
 
 ### Try it: a semantic failure
 
-`meraki/rules/101_admin_name.py` is a custom rule: it rejects any
-administrator named `root`. Temporarily change `administrator.name` above
-from `admin` to `root`, then run the business-rule check - the same
-`nac-validate` tool, this time pointed at the rules directory (see
-`meraki/README.md`):
+`meraki/.rules/101_admin_name.py` is a custom rule: it rejects any
+administrator named `root`. Temporarily change `administrator.name` (line 5)
+from `admin` to `root`, then run the **exact same command** again - no extra
+flags or separate tool invocation needed, `nac-validate` picks up the rules
+in `.rules/` automatically:
 
 ```sh
-pip install nac-validate
-nac-validate -r rules data/*.nac.yaml
+nac-validate data/1_org_global.nac.yaml --verbosity DEBUG
 ```
 
-This fails with a `HIGH` severity violation on rule `101` - the YAML is
-perfectly legal syntax, but it breaks a policy the schema can't express.
-Change `administrator.name` back to `admin` when you're done.
+!!! failure "Semantic validation: FAILED"
+    ```text
+    INFO - Artifact layer [local]: schema .schema.yaml, rules .rules
+    INFO - Loading of bundles and modules is disabled
+    INFO - Loading schema from .schema.yaml
+    INFO - Loading local rules from .rules
+    INFO - Validate file: data/1_org_global.nac.yaml
+    INFO - Loading yaml files from [PosixPath('data/1_org_global.nac.yaml')]
+    INFO - Verifying rule id 101
+
+    [RULE 101] Admin name must not be 'root'
+
+    ────────────────────────────────────────────────────────────────────────────────
+      • Admin name must not be 'root' in domain 'US'
+    ────────────────────────────────────────────────────────────────────────────────
+
+    ────────────────────────────────────────────────────────────────────────────────
+    Validation Summary
+    ────────────────────────────────────────────────────────────────────────────────
+      ✓ Syntax validation: PASSED (1 files)
+      ✗ Semantic validation: FAILED (1 violation)
+
+        • 1 HIGH severity violation (rules: 101)
+    ────────────────────────────────────────────────────────────────────────────────
+    ```
+
+The YAML here is perfectly legal syntax - syntax validation still passes -
+but it breaks a policy the schema can't express on its own. Change
+`administrator.name` back to `admin` when you're done, and re-run the
+command to confirm it passes again.
+
+## Plan and Apply
+
+With the file passing both validation layers (and `administrator.name` and
+`num_different_passwords` back to their original values), deploy it for
+real. Both commands run from `meraki/`.
+
+### `terraform plan`
+
+```sh
+terraform plan
+```
+
+`plan` is read-only - it computes what Terraform *would* do without
+touching your organization, and ends with a summary line:
+
+```text
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+```
+
+`4 to add` is this file's four resources: the merged-model file, the org's
+SNMP settings, its login security policy, and its VPN firewall rules.
+`0 to change, 0 to destroy` confirms nothing in your org already conflicts
+with what you're about to create.
+
+### `terraform apply`
+
+```sh
+terraform apply
+```
+
+`apply` re-computes the same plan, then stops and asks you to confirm
+before it changes anything - only typing `yes` (not just Enter) proceeds:
+
+```text
+Plan: 4 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: 
+```
+
+Type `yes` and press Enter - this is the first command in the lab that
+actually writes to your Meraki organization:
+
+```text
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+module.meraki.local_sensitive_file.model[0]: Creating...
+module.meraki.local_sensitive_file.model[0]: Creation complete after 1s [id=1071a02f3c85d841c898795b7b52ac1b58bc9d79]
+module.meraki.meraki_organization_snmp.organizations_snmp["US/Dev-SM"]: Creating...
+module.meraki.meraki_organization_login_security.organizations_login_security["US/Dev-SM"]: Creating...
+module.meraki.meraki_appliance_vpn_firewall_rules.organizations_appliance_vpn_firewall_rules["US/Dev-SM"]: Creating...
+module.meraki.meraki_organization_snmp.organizations_snmp["US/Dev-SM"]: Creation complete after 1s [id=709316941310853538]
+module.meraki.meraki_organization_login_security.organizations_login_security["US/Dev-SM"]: Creation complete after 1s [id=709316941310853538]
+module.meraki.meraki_appliance_vpn_firewall_rules.organizations_appliance_vpn_firewall_rules["US/Dev-SM"]: Creation complete after 2s [id=709316941310853538]
+
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
+```
+
+!!! tip "Verify in the Dashboard"
+    Log in to the Meraki Dashboard and confirm your organization now shows
+    the SNMP, login security, and VPN firewall settings from
+    `data/1_org_global.nac.yaml`.
 
 ---
 

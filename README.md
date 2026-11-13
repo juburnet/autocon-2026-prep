@@ -8,4 +8,4 @@ Attendees build a Network as Code workflow using Meraki APIs, Terraform, GitHub 
 
 ## Lab Guide
 
-[View the rendered lab guide](https://snmitrov.github.io/autocon-2026-prep/)
+[View the rendered lab guide](https://snmitrov.github.io/autocon-2026/)
