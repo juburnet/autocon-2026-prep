@@ -819,6 +819,6 @@
 
 /* Inline overview diagram sits smaller on the page; the lightbox (1200px) is larger. */
 .md-typeset img[src$="meraki-lab-overview.svg"] {
-    width: 85%;
+    width: 90%;
     height: auto;
 }
