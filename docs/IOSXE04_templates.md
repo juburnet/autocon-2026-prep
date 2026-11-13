@@ -1,6 +1,6 @@
 # Step 5 - `data/4_templates.nac.yaml` + `data/4_templates_assignment.nac.yaml`: `model` templates
 
-The capstone, mirroring Meraki's step 6. Templates answer *what
+The capstone, mirroring Meraki's step 7. Templates answer *what
 configuration* to apply; device groups (step 4) answer *which devices*. Used
 together, you get "this exact VLAN set, on exactly these devices" without
 duplicating the VLAN definitions per device. Deliberately split into two
