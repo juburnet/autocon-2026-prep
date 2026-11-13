@@ -137,10 +137,7 @@ layers are the same shape for both tracks in this lab - only layers 3-5
 differ by platform:
 
 <figure markdown="span">
-  ![The Network as Code stack](assets/nac-stack-layers.svg)<figcaption>The five
-  layers of the stack. The shape is the same for both tracks; only layers 3-5
-  differ by platform. You own layer 1; NaC owns layers 2 through 4. Click the
-  diagram to open it full size.</figcaption>
+  ![The Network as Code stack](assets/nac-stack-layers.svg)
 </figure>
 
 | Layer | What it is | Meraki track | IOS XE track |
