@@ -18,12 +18,9 @@ The guide walks through both halves of the lab, in order:
   (one per shared pod, appliance/switch/wireless) directly in YAML, ending
   on a templating/indirection capstone.
 - **Part 2 - IOS-XE**, a small four-device lab (`Border`, `Core`, `Access1`,
-  `Access2`) where you register each device's identity, then layer on shared
-  configuration through device groups and global settings, finishing with
-  the same templating/indirection pattern from Part 1 so the two halves
-  reinforce each other.
+  `Access2`) where you will push some basic configuration to IOS-XE devices directelly. 
 
-The two parts are deliberately paired: Meraki is a controller-managed
+Meraki is a controller-managed
 platform (you configure a cloud Dashboard, which then pushes to devices),
 while IOS XE is configured directly, device by device, over NETCONF. Walking
 through both shows that Network as Code isn't tied to one architecture - the

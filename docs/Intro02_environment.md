@@ -5,9 +5,8 @@ either track:
 
 1. **Windows Jump Machine** - the shared lab desktop with VS Code, WSL, and
    Terraform pre-installed, reachable over WebRDP without a VPN.
-2. **GitLab & CI/CD** - clone the public starter repo first, then later
-   point it at your lab GitLab project (reachable from the jump machine's
-   browser, or directly if you're on VPN) to run the pipeline.
+2. **CI/CD** - after running through the steps manually, we will be pushing the configuration to the devices through CICD as well. As part of the lab enviroment we installed GitLab CI, but we will provide you also with eqivaalent Github actions you can run at your own repository.  GitLab project is reachable from the jump machine's
+   browser, or directly if you're on VPN to run the pipeline.
 3. **Meraki Dashboard** - the cloud controller for Part 1, accessed with
    your own account under a Bring Your Own Account (BYOA) model.
 4. **IOS-XE Virtual Lab** - the four virtualized switches for Part 2,
@@ -100,14 +99,8 @@ on Windows without a virtual machine. WSL is pre-installed in this lab, and
 you'll use it to run Terraform commands - most DevOps tools, including
 Terraform, are designed for Linux.
 
-## 2. GitLab & CI/CD
+## 2. CI/CD
 
-Two different Git locations matter here, at two different points in the
-lab:
-
-- **The starter repo** - a public repository holding the lab's starting
-  files. You'll clone this first, below, to get your project onto the jump
-  machine - it's public, so no VPN or login needed.
 - **Your GitLab project** - the lab's own GitLab instance, where your CI/CD
   pipeline actually runs. You won't touch this until [CI/CD
   Pipeline](Meraki07_cicd.md), where you'll repoint your already-cloned repo
